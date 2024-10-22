@@ -1,5 +1,6 @@
 .App {
-  text-align: center;
+  text-align: left;
+  padding: 10px;
 }
 
 .App-logo {
@@ -36,3 +37,38 @@
     transform: rotate(360deg);
   }
 }
+
+.InputAnswers {
+  text-align: center;
+}
+
+.buttonPanel {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.closeButton {
+  height: auto !important;
+  width: 30px !important;
+  margin: 5px !important;
+}
+
+.QuestionTable {
+  cursor: pointer;
+}
+
+.QuestionTable td {
+  text-align: left; 
+  vertical-align: middle;
+}
+
+.addButtons {
+  padding-bottom: 10px;
+}
+
+.TdButtonColumn 
+{
+  width: 15%;
+  text-align: center !important;
+}
+
