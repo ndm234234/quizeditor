@@ -62,7 +62,7 @@ function QuestionPanel(props) {
                         answers : props.answers.map((item, index) =>  { return { item : item, index : index}; }).filter((item) => item.item.correct).map((item) => {
                                 return item.index;
                             }),
-                        score : props.score,
+                        score : parseInt(props.score),
                         category : props.category,
                         info : props.info,
                         info_img : props.infoImg
