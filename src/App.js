@@ -157,7 +157,7 @@ function App() {
         keyboard={true}
       >
   <Modal.Header closeButton>
-    <Modal.Title>Удаление</Modal.Title>
+    <Modal.Title>Удаление вопроса</Modal.Title>
   </Modal.Header>
   <Modal.Body>
     {itemToDelete} 

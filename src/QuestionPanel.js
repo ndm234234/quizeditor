@@ -17,6 +17,8 @@ function QuestionPanel(props) {
           <Form.Control 
             value={props.category}
             onChange={e => props.setCategory(e.target.value)} />
+        </InputGroup>
+        <InputGroup className="mb-3">
           <InputGroup.Text>Очки</InputGroup.Text>
           <Form.Control type="number"
             value={props.score}

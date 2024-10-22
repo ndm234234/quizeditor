@@ -9,12 +9,17 @@ function QuestionTable(props) {
 
   const JSONToFile = (obj, filename) => {
     const tempLink = document.createElement("a");
-    const blob = new Blob([JSON.stringify(obj, null, 2)], {  type: 'text/plain'});
+    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'text/plain' });
     tempLink.setAttribute('href', URL.createObjectURL(blob));
     tempLink.setAttribute('download', filename);
     tempLink.click();
     URL.revokeObjectURL(tempLink.href);
   };
+
+  function updateData(data) {
+    props.setData(data);
+    props.updateTitle(data.title);
+  }
 
   function handleChange(event) {
     if (event.target.files.length > 0) {
@@ -23,12 +28,9 @@ function QuestionTable(props) {
     props.setFileName(file.name);
     var r = new FileReader();
     r.onload = function(e) { 
-        var contents = e.target.result;
-        let data = JSON.parse(contents);
-      
-        props.setData(data);
-        props.updateTitle(data.title);
-        event.target.value=null;
+        let data = JSON.parse(e.target.result);
+        updateData(data);
+        event.target.value = null;
       }
     r.readAsText(file);
     }
@@ -45,9 +47,19 @@ function QuestionTable(props) {
               <Form.Control type="file" id="fileInput" 
                 accept=".txt,.json"
                 onChange={handleChange}  style={{ display: 'none' }}  />
-                <ButtonGroup className="me-2">
+              <ButtonGroup className="me-2">
               <Button 
-                  variant="primary" 
+                    variant="primary" 
+                  onClick={() => {
+                    var data = { title : "", items : new Array()};
+                    updateData(data);
+                  }
+                }
+              >Новая/Сбросить</Button>
+              </ButtonGroup>
+               <ButtonGroup className="me-2">
+              <Button 
+                    variant="primary" 
                   onClick={() => document.getElementById('fileInput').click()} 
               >Загрузить файл</Button>
               </ButtonGroup>
