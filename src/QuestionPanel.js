@@ -38,7 +38,7 @@ function QuestionPanel(props) {
                           updateAnswerCorrect={props.updateAnswerCorrect} deleteAnswer={props.deleteAnswer} />
           <div className="buttonPanel">
               <Button onClick={() => {
-                props.setAnswers(answers => [...answers, { name: "", correct: 0, id: crypto.randomUUID() }]);
+                props.setAnswers(answers => [...answers, { name: "", correct: 0, id: window.crypto.randomUUID() }]);
               } }>Добавить ответ</Button>
           </div>
         </div>
