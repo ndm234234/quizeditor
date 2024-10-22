@@ -53,17 +53,17 @@ function QuestionPanel(props) {
             onChange={e => props.setInfoImg(e.target.value)} />
         </div>
         <div className="buttonPanel">
-            <ButtonGroup className="me-2" aria-label="First group">
+            <ButtonGroup className="me-2">
                 <Button onClick={() => { 
                     var item = 
                     {
                         question : props.question,
-                        category : props.category,
-                        score : props.score,
                         options : props.answers.map((item) => { return item.name;  }),
                         answers : props.answers.map((item, index) =>  { return { item : item, index : index}; }).filter((item) => item.item.correct).map((item) => {
                                 return item.index;
                             }),
+                        score : props.score,
+                        category : props.category,
                         info : props.info,
                         info_img : props.infoImg
                     }
