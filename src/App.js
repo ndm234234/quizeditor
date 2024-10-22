@@ -99,6 +99,13 @@ function App() {
     }
   };
 
+  function uuid() {
+    const url = URL.createObjectURL(new Blob())
+    const [id] = url.toString().split('/').reverse()
+    URL.revokeObjectURL(url)
+    return id
+  }
+
  const showQuestion = (item) => {
     setQuestion(item.question);
     setInfo(item.info);
@@ -108,7 +115,7 @@ function App() {
     var newArray = new Array();
     item.options.map((value, index) =>
     {
-      newArray.push({ name : value, correct : answers.has(index) ? 1 : 0,  id : crypto.randomUUID() });
+      newArray.push({ name : value, correct : answers.has(index) ? 1 : 0,  id : uuid() });
     });
     setAnswers(newArray);
     setCategory(item.category);
