@@ -6,6 +6,14 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
 
 function QuestionPanel(props) {
+
+  function uuid() {
+    const url = URL.createObjectURL(new Blob())
+    const [id] = url.toString().split('/').reverse()
+    URL.revokeObjectURL(url)
+    return id
+  }
+
     if (!props.visible) 
     {
       return <div></div>
@@ -38,7 +46,7 @@ function QuestionPanel(props) {
                           updateAnswerCorrect={props.updateAnswerCorrect} deleteAnswer={props.deleteAnswer} />
           <div className="buttonPanel">
               <Button onClick={() => {
-                props.setAnswers(answers => [...answers, { name: "", correct: 0, id: window.crypto.randomUUID() }]);
+                props.setAnswers(answers => [...answers, { name: "", correct: 0, id: uuid() }]);
               } }>Добавить ответ</Button>
           </div>
         </div>
