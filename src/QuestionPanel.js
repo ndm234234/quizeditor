@@ -33,7 +33,7 @@ function QuestionPanel(props) {
             onChange={e => props.setQuestion(e.target.value)} />
         </InputGroup>
         <div>
-          <Form.Label>Варианты ответов (<b>правильные</b> выделите галочкой)</Form.Label>
+          <Form.Label>Варианты ответов (<b>правильные выделите галочкой слева от ответа</b>)</Form.Label>
           <AnswersDisplay visible={props.visible} answers={props.answers} updateAnswer={props.updateAnswer} 
                           updateAnswerCorrect={props.updateAnswerCorrect} deleteAnswer={props.deleteAnswer} />
           <div className="buttonPanel">
@@ -43,12 +43,12 @@ function QuestionPanel(props) {
           </div>
         </div>
         <div>
-          <Form.Label>Информация об ответе</Form.Label>
+          <Form.Label>Информация о правильном ответе</Form.Label>
           <Form.Control placeholder="Дополнительная информация о правильном ответе" as="textarea" rows={5}
             value={props.info != null ? props.info : ""}
             onChange={e => props.setInfo(e.target.value)}/>
           <Form.Label>Изображение</Form.Label>
-          <Form.Control placeholder="Название файла картинки"
+          <Form.Control placeholder="Название файла картинки или ссылка"
             value={props.infoImg != null ? props.infoImg : ""}
             onChange={e => props.setInfoImg(e.target.value)} />
         </div>
