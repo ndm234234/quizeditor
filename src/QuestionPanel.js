@@ -44,6 +44,7 @@ function QuestionPanel(props) {
             type="text"
             placeholder="Введите вопрос"
             required 
+            autoFocus 
             isInvalid={validated && props.question.length == 0}
             value={props.question}
             onChange={e => props.setQuestion(e.target.value)} />
