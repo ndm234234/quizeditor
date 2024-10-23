@@ -111,7 +111,7 @@ function QuestionPanel(props) {
                 <InputGroup.Checkbox aria-label="Checkbox for following text input" defaultChecked = {item.correct}
                 onChange={(e) => props.updateAnswerCorrect(e.target.checked, index)}
                 />
-                <Form.Control placeholder="Введите ответ" defaultValue = {item.name}
+                <Form.Control placeholder="Введите ответ" defaultValue = {item.name} autoFocus={item.name.length==0}
                 onChange={(e) => props.updateAnswerText(e.target.value, index)}
                 isInvalid={props.validated && item.name.length == 0}
                 />
