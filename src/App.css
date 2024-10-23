@@ -54,7 +54,7 @@
 }
 
 .QuestionTable {
-  cursor: pointer;
+  cursor: auto;
 }
 
 .QuestionTable td {
@@ -66,9 +66,14 @@
   padding-bottom: 10px;
 }
 
-.TdButtonColumn 
+.TdButtonAction 
 {
   width: 15%;
   text-align: center !important;
 }
 
+.TdScore 
+{
+  width: 50px;
+  text-align: center !important;
+}

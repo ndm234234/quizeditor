@@ -5,16 +5,9 @@ import CustomPagination from './CustomPagination';
 import Button from "react-bootstrap/Button";
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
-function QuestionTable(props) {
+import { JSONToFile } from './tools.js';
 
-  const JSONToFile = (obj, filename) => {
-    const tempLink = document.createElement("a");
-    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'text/plain' });
-    tempLink.setAttribute('href', URL.createObjectURL(blob));
-    tempLink.setAttribute('download', filename);
-    tempLink.click();
-    URL.revokeObjectURL(tempLink.href);
-  };
+function QuestionTable(props) {
 
   function updateData(data) {
     props.setData(data);
@@ -44,37 +37,28 @@ function QuestionTable(props) {
   return (
     <>
       <Form.Group className="mb-3">
-              <Form.Control type="file" id="fileInput" 
-                accept=".txt,.json"
-                onChange={handleChange}  style={{ display: 'none' }}  />
-              <ButtonGroup className="me-2">
-              <Button 
-                    variant="primary" 
-                  onClick={() => {
-                    var data = { title : "", items : new Array()};
-                    updateData(data);
-                  }
-                }
-              >Новая/Сбросить</Button>
-              </ButtonGroup>
-               <ButtonGroup className="me-2">
-              <Button 
-                    variant="primary" 
-                  onClick={() => document.getElementById('fileInput').click()} 
-              >Загрузить файл</Button>
-              </ButtonGroup>
-              <ButtonGroup className="me-2">
-              <Button 
-                  variant="primary" 
-                  onClick={() => JSONToFile(props.customData, props.fileName)} 
-              >Сохранить файл</Button>
-              </ButtonGroup>
+        <Form.Control type="file" id="fileInput" 
+          accept=".txt,.json"
+          onChange={handleChange}  style={{ display: 'none' }}  />
+          <ButtonGroup className="me-2">
+            <Button variant="primary" onClick={() => { updateData({ title : "", items : new Array()}); }}>Новая/Сбросить</Button>
+          </ButtonGroup>
+          <ButtonGroup className="me-2">
+            <Button variant="primary" onClick={() => document.getElementById('fileInput').click()}>Загрузить файл</Button>
+          </ButtonGroup>
+          <ButtonGroup className="me-2">
+            <Button variant="primary" onClick={() => {
+                var data = props.customData;
+                data.title = props.title;
+                JSONToFile(data, props.title.length > 0 ? props.title + ".txt" : props.fileName)
+              }}>Сохранить файл</Button>
+          </ButtonGroup>
       </Form.Group>
       <InputGroup className="mb-3">
         <InputGroup.Text>Название викторины</InputGroup.Text>
         <Form.Control
           placeholder='Название'
-          value={props.customData.title}
+          value={props.title}
           onChange={(e) => props.updateTitle(e.target.value)} />
       </InputGroup>
       <InputGroup className="mb-3">
@@ -99,18 +83,13 @@ function QuestionTable(props) {
                 <tr key={item.question}>
                   <td>{item.question}</td>
                   <td>{item.category}</td>
-                  <td>{item.score}</td>
-                  <td className='TdButtonColumn'>
+                  <td className='TdScore'>{item.score}</td>
+                  <td className='TdButtonAction'>
                   <ButtonGroup className="me-2"  >
-                    <Button
-                        onClick={() => props.showQuestion(item)}
-                  >Изменить</Button>
+                    <Button  onClick={() => props.showQuestion(item)}>Изменить</Button>
                   </ButtonGroup>
                   <ButtonGroup className="me-2" >
-                    <Button
-                        onClick={() => props.deleteQuestion(item)}
-                  >Удалить</Button>
-                  
+                    <Button  onClick={() => props.deleteQuestion(item)}>Удалить</Button>
                   </ButtonGroup>
                   </td>
                 </tr>
@@ -120,19 +99,16 @@ function QuestionTable(props) {
             )}
           </tbody>
         </Table>
-          {props.filteredData.length > 0 &&
-            <CustomPagination
-              itemsCount={props.filteredData.length}
-              itemsPerPage={props.pageSize}
-              currentPage={props.currentPage}
-              setCurrentPage={props.setCurrentPage}
-              alwaysShown={true} />}
-
-           <div className="addButtons">
-              <Button
-                onClick={() => props.createNewQuestion()}
-              >Новый вопрос</Button>
-            </div>
+        {props.filteredData.length > 0 &&
+          <CustomPagination
+            itemsCount={props.filteredData.length}
+            itemsPerPage={props.pageSize}
+            currentPage={props.currentPage}
+            setCurrentPage={props.setCurrentPage}
+            alwaysShown={true} />}
+        <div className="addButtons">
+            <Button onClick={props.createNewQuestion}>Новый вопрос</Button>
+        </div>
         </>
     );
   }

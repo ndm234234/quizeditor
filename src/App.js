@@ -8,13 +8,27 @@ import "bootstrap/dist/css/bootstrap.css";
 
 import QuestionTable from './QuestionTable';
 import QuestionPanel from './QuestionPanel';
-import Form from 'react-bootstrap/Form';
 import Button from "react-bootstrap/Button";
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Modal from 'react-bootstrap/Modal'; 
+
+import { uuid } from './tools.js';
 
 //import customData from './Mitino.json';
 let customData = { title : "" , items : new Array() };
+
+const useEscape = (onEscape) => {
+  useEffect(() => {
+      const handleEsc = (event) => {
+          if (event.keyCode === 27) 
+              onEscape();
+      };
+      window.addEventListener('keydown', handleEsc);
+
+      return () => {
+          window.removeEventListener('keydown', handleEsc);
+      };
+  }, []);
+}
 
 function App() {
   const pageSize = 5; // show row in table
@@ -27,100 +41,72 @@ function App() {
   const [infoImg, setInfoImg] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchFilter, setSearchFilter] = useState(""); 
-  const [questionDetail, setQuestionDetail] = useState(false)  
+  const [showQuestionDetail, setShowQuestionDetail] = useState(false)  
   const [fileName, setFileName] = useState("New.txt")
   const [showModalQuery, setShowModalQuery] = useState(false);
 
   const [indexToDelete, setIndexToDelete] = useState(-1);
   const [itemToDelete, setItemToDelete] = useState("");
 
-  const handleCloseModal = () =>
-    {
+  const handleCloseModal = () => {
       if (indexToDelete != -1)
       {
         customData.items.splice(indexToDelete, 1);
-        resetNewQuestion();
         setIndexToDelete(-1);
         setItemToDelete("");
       }
       setShowModalQuery(false);
     }
+
   const handleCancelModal = () => {
     setShowModalQuery(false);
   }
-
-  const handleTitle = (e) => {
-    setTitle(e);
-    customData.title = e;
-  };
 
   const handleFilter = (e) => {
     setSearchFilter(e.target.value);
   };
 
-  const resetNewQuestion = () => {
-    setCategory("История");
+  const createNewQuestion = () => {
     setScore(30);
     setQuestion("");
     setAnswers(new Array());
     setInfo("");
     setInfoImg("");
-  }
-
-  const createNewQuestion = () => {
-    resetNewQuestion();
-    setQuestion("Новый вопрос");
-    setQuestionDetail(true);
+    setShowQuestionDetail(true);
   }
 
   const createOrUpdateQuestion = (item) => {
     const index = customData.items.findIndex(i => i.question == item.question);
-    if (index == -1)
-    {
+    if (index == -1) {
       customData.items.push(item);
       const pagesCount = Math.ceil(customData.items.length / pageSize);
       setCurrentPage(pagesCount);
     }
-    else
-    {
+    else {
       customData.items[index] = item;
     }
-    resetNewQuestion();
-    setQuestionDetail(false);
   }
 
   const deleteQuestion = (item) => {
     const index = customData.items.findIndex(i => i.question == item.question);
     setIndexToDelete(index);
     setItemToDelete(item.question);
-    if (index != -1)
-    {
+    if (index != -1) {
       setShowModalQuery(true);
     }
   };
 
-  function uuid() {
-    const url = URL.createObjectURL(new Blob())
-    const [id] = url.toString().split('/').reverse()
-    URL.revokeObjectURL(url)
-    return id
-  }
-
  const showQuestion = (item) => {
     setQuestion(item.question);
-    setInfo(item.info);
-    setInfoImg(item.info_img);
-
-    var answers = new Set(item.answers);
-    var newArray = new Array();
-    item.options.map((value, index) =>
-    {
-      newArray.push({ name : value, correct : answers.has(index) ? 1 : 0,  id : uuid() });
-    });
+    const answers = new Set(item.answers);
+    var newArray = item.options.map((value, index) => { return { name : value, correct : answers.has(index) ? 1 : 0,  id : uuid() }; });
     setAnswers(newArray);
     setCategory(item.category);
     setScore(item.score);
-    setQuestionDetail(true);
+    setInfo(item.info);
+    setInfoImg(item.info_img);
+
+    setShowQuestionDetail(true);
   }
 
   function updateAnswerCorrect(correct, index) {
@@ -129,7 +115,7 @@ function App() {
     setAnswers(newArray);
   }
 
-  function updateAnswer(text, index) {
+  function updateAnswerText(text, index) {
     var newArray = answers.slice();
     newArray[index].name = text;
     setAnswers(newArray);
@@ -140,44 +126,38 @@ function App() {
     setAnswers(newArray);
   }
 
-  const filteredData = customData.items.filter(
-    (item) =>
-      item.question.toLowerCase().includes(searchFilter.toLowerCase())
-  );
-
-  const paginatedData = filteredData.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
+  const filteredData = customData.items.filter((item) => item.question.toLowerCase().includes(searchFilter.toLowerCase()));
+  const paginatedData = filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   useEffect(() => {
     setCurrentPage(1);
   }, []);
 
+  useEscape(() => { setShowQuestionDetail(false);});
+
+
   return (
     <div className="App">
 
-<Modal
+  <Modal
         show={showModalQuery}
         onHide={handleCancelModal}
         backdrop="static"
         keyboard={true}
       >
-  <Modal.Header closeButton>
-    <Modal.Title>Удаление вопроса</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    {itemToDelete} 
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={handleCancelModal}>
-      Отмена
-    </Button>
-    <Button variant="primary" onClick={handleCloseModal} >Удалить</Button>
-  </Modal.Footer>
-</Modal>
+    <Modal.Header closeButton>
+      <Modal.Title>Удаление вопроса</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      {itemToDelete} 
+    </Modal.Body>
+    <Modal.Footer>
+      <Button variant="secondary" onClick={handleCancelModal}>Отмена</Button>
+      <Button variant="primary" onClick={handleCloseModal} >Удалить</Button>
+    </Modal.Footer>
+  </Modal>
 
-  <QuestionTable visible={!questionDetail} 
+  <QuestionTable visible={!showQuestionDetail} 
                  searchFilter={searchFilter} 
                  handleFilter={handleFilter} 
                  paginatedData={paginatedData} filteredData={filteredData} 
@@ -189,28 +169,29 @@ function App() {
                  fileName={fileName}
                  setFileName={setFileName}
                  customData={customData}
-                 updateTitle={handleTitle}
+                 title={title}
+                 updateTitle={setTitle}
                  setData={(data) => {
                   customData = data;
-                  resetNewQuestion();
-                  setQuestionDetail(false);
+                  setShowQuestionDetail(false);
                  }}/>
 
-   <QuestionPanel visible={questionDetail} 
+   <QuestionPanel visible={showQuestionDetail} 
                   category={category} setCategory={setCategory} 
                   score={score} setScore={setScore}
                   question={question} setQuestion={setQuestion}
                   answers={answers} setAnswers={setAnswers} 
                   deleteAnswer={deleteAnswer}
-                  updateAnswer={updateAnswer}
+                  updateAnswerText={updateAnswerText}
                   updateAnswerCorrect={updateAnswerCorrect}
                   info={info} setInfo={setInfo}
                   infoImg={infoImg} setInfoImg={setInfoImg}
-                  save ={createOrUpdateQuestion}
-                  cancel={()=> 
-                  {
-                      resetNewQuestion();
-                      setQuestionDetail(false);
+                  save ={(e) => {
+                    createOrUpdateQuestion(e);
+                    setShowQuestionDetail(false);
+                  }}
+                  cancel={()=> {
+                    setShowQuestionDetail(false);
                   }}/>
     </div>
   );
