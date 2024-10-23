@@ -8,13 +8,11 @@ import "bootstrap/dist/css/bootstrap.css";
 
 import QuestionTable from './QuestionTable';
 import QuestionPanel from './QuestionPanel';
-import Button from "react-bootstrap/Button";
-import Modal from 'react-bootstrap/Modal'; 
+import MessageBoxModal from './MessageBoxModal.js';
 
 import { uuid } from './tools.js';
 
-//import customData from './Mitino.json';
-let customData = { title : "" , items : new Array() };
+//import loadedCustomData from './Mitino.json';
 
 const useEscape = (onEscape) => {
   useEffect(() => {
@@ -47,6 +45,8 @@ function App() {
 
   const [indexToDelete, setIndexToDelete] = useState(-1);
   const [itemToDelete, setItemToDelete] = useState("");
+
+  const [customData, setCustomData] = useState({ title : "" , items : new Array() });
 
   const handleCloseModal = () => {
       if (indexToDelete != -1)
@@ -139,23 +139,13 @@ function App() {
   return (
     <div className="App">
 
-  <Modal
-        show={showModalQuery}
-        onHide={handleCancelModal}
-        backdrop="static"
-        keyboard={true}
-      >
-    <Modal.Header closeButton>
-      <Modal.Title>Удаление вопроса</Modal.Title>
-    </Modal.Header>
-    <Modal.Body>
-      {itemToDelete} 
-    </Modal.Body>
-    <Modal.Footer>
-      <Button variant="secondary" onClick={handleCancelModal}>Отмена</Button>
-      <Button variant="primary" onClick={handleCloseModal} >Удалить</Button>
-    </Modal.Footer>
-  </Modal>
+  <MessageBoxModal show={showModalQuery}  
+                   title="Удаление"
+                   query={itemToDelete}
+                   cancelButton="Отмена"
+                   okButton="Удалить"
+                   onCancel={handleCancelModal} 
+                   OnOk={handleCloseModal}   />
 
   <QuestionTable visible={!showQuestionDetail} 
                  searchFilter={searchFilter} 
@@ -172,8 +162,8 @@ function App() {
                  title={title}
                  updateTitle={setTitle}
                  setData={(data) => {
-                  customData = data;
-                  setShowQuestionDetail(false);
+                    setCustomData(data);
+                    setShowQuestionDetail(false);
                  }}/>
 
    <QuestionPanel visible={showQuestionDetail} 

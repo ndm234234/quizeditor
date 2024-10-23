@@ -13,7 +13,8 @@ function QuestionPanel(props) {
   const checkItem = (item) => {
     return item.question.length > 0 &&
            item.options.filter(i => i.length == 0).length == 0 &&
-           item.score > 0;
+           item.score > 0 &&
+           item.category.length > 0;
   }
 
     if (!props.visible) 
@@ -57,7 +58,7 @@ function QuestionPanel(props) {
                           updateAnswerCorrect={props.updateAnswerCorrect} deleteAnswer={props.deleteAnswer}
                           validated={validated} />
           <div className="buttonPanel">
-              <Button onClick={() => {
+              <Button id="add_answer_button" onClick={() => {
                 props.setAnswers(answers => [...answers, { name: "", correct: 0, id: uuid() }]);
               } }>Добавить ответ</Button>
           </div>
@@ -108,11 +109,16 @@ function QuestionPanel(props) {
           return (
             <div key={item.id}>
               <InputGroup className="mt-3 InputAnswers">
-                <InputGroup.Checkbox aria-label="Checkbox for following text input" defaultChecked = {item.correct}
+                <InputGroup.Checkbox defaultChecked = {item.correct}
                 onChange={(e) => props.updateAnswerCorrect(e.target.checked, index)}
                 />
                 <Form.Control placeholder="Введите ответ" defaultValue = {item.name} autoFocus={item.name.length==0}
                 onChange={(e) => props.updateAnswerText(e.target.value, index)}
+                onKeyDown={event => {
+//                  if (event.key === "Enter") {
+//                    document.getElementById('add_answer_button').click()
+//                  }
+                }}
                 isInvalid={props.validated && item.name.length == 0}
                 />
                 <CloseButton className="closeButton" onClick={() => props.deleteAnswer(index)}/>

@@ -1,3 +1,5 @@
+import  { useEffect, useState, useCallback } from "react";
+
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -6,8 +8,10 @@ import Button from "react-bootstrap/Button";
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
 import { JSONToFile } from './tools.js';
+import MessageBoxModal from './MessageBoxModal.js';
 
 function QuestionTable(props) {
+  const [showConfirmModalQuery, setShowConfirmModalQuery] = useState(false);
 
   function updateData(data) {
     props.setData(data);
@@ -36,12 +40,23 @@ function QuestionTable(props) {
   else
   return (
     <>
+      <MessageBoxModal show={showConfirmModalQuery}  
+                       title="Создание"
+                       query="Создать новую викторину? Все несохраненные данные будут потеряны."
+                       cancelButton="Отмена"
+                       okButton="Создать"
+                       onCancel={()=> { setShowConfirmModalQuery(false); }} 
+                       OnOk={()=> {
+                           setShowConfirmModalQuery(false);
+                           updateData({ title : "", items : new Array()});
+                       }}   />
+
       <Form.Group className="mb-3">
         <Form.Control type="file" id="fileInput" 
           accept=".txt,.json"
           onChange={handleChange}  style={{ display: 'none' }}  />
           <ButtonGroup className="me-2">
-            <Button variant="primary" onClick={() => { updateData({ title : "", items : new Array()}); }}>Новая/Сбросить</Button>
+            <Button variant="primary" onClick={() => { setShowConfirmModalQuery(true); }}>Новая/Сбросить</Button>
           </ButtonGroup>
           <ButtonGroup className="me-2">
             <Button variant="primary" onClick={() => document.getElementById('fileInput').click()}>Загрузить файл</Button>
