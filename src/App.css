@@ -42,11 +42,6 @@
   text-align: center;
 }
 
-.buttonPanel {
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
 .closeButton {
   height: auto !important;
   width: 30px !important;
@@ -77,3 +72,4 @@
   width: 50px;
   text-align: center !important;
 }
+

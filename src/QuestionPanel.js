@@ -52,28 +52,29 @@ function QuestionPanel(props) {
             <Form.Control.Feedback type="invalid">Необходимо ввести вопрос</Form.Control.Feedback>
         </InputGroup>
         <div>
-          <Form.Label>Варианты ответов (<b>правильные выделите галочкой слева от ответа</b>)</Form.Label>
           <AnswersDisplay answers={props.answers} 
                           updateAnswerText={props.updateAnswerText} 
                           updateAnswerCorrect={props.updateAnswerCorrect} deleteAnswer={props.deleteAnswer}
                           validated={validated} />
-          <div className="buttonPanel">
+          <Form.Group className="mb-3">
               <Button id="add_answer_button" onClick={() => {
                 props.setAnswers(answers => [...answers, { name: "", correct: 0, id: uuid() }]);
-              } }>Добавить ответ</Button>
-          </div>
+                } }>Добавить ответ</Button>
+          </Form.Group>              
         </div>
-        <div>
-          <Form.Label>Информация о правильном ответе</Form.Label>
-          <Form.Control placeholder="Дополнительная информация о правильном ответе" as="textarea" rows={5}
-            value={props.info != null ? props.info : ""}
-            onChange={e => props.setInfo(e.target.value)}/>
+        <Form.Group className="mb-3">
+            <Form.Label>Информация о правильном ответе</Form.Label>
+            <Form.Control placeholder="Дополнительная информация о правильном ответе" as="textarea" rows={7}
+              value={props.info != null ? props.info : ""}
+              onChange={e => props.setInfo(e.target.value)}/>
+        </Form.Group>
+        <Form.Group className="mb-3">
           <Form.Label>Изображение</Form.Label>
           <Form.Control placeholder="Название файла картинки или ссылка"
             value={props.infoImg != null ? props.infoImg : ""}
             onChange={e => props.setInfoImg(e.target.value)} />
-        </div>
-        <div className="buttonPanel">
+        </Form.Group>
+        <Form.Group className="mb-3">
             <ButtonGroup className="me-2">
                 <Button onClick={() => { 
                     var item = 
@@ -97,37 +98,41 @@ function QuestionPanel(props) {
                 <Button onClick={() => props.cancel()}
                  >Отмена</Button>
             </ButtonGroup>
-        </div>
+          </Form.Group>
         </>
       );
   }
   
   function AnswersDisplay(props) {
     return (
-    <div>
-        {props.answers.map((item, index) => {
-          return (
-            <div key={item.id}>
-              <InputGroup className="mt-3 InputAnswers">
-                <InputGroup.Checkbox defaultChecked = {item.correct}
-                onChange={(e) => props.updateAnswerCorrect(e.target.checked, index)}
-                />
-                <Form.Control placeholder="Введите ответ" defaultValue = {item.name} autoFocus={item.name.length==0}
-                onChange={(e) => props.updateAnswerText(e.target.value, index)}
-                onKeyDown={event => {
-//                  if (event.key === "Enter") {
-//                    document.getElementById('add_answer_button').click()
-//                  }
-                }}
-                isInvalid={props.validated && item.name.length == 0}
-                />
-                <CloseButton className="closeButton" onClick={() => props.deleteAnswer(index)}/>
-                <Form.Control.Feedback type="invalid">Необходимо ввести текст ответа</Form.Control.Feedback>
-              </InputGroup>
-            </div>
-          );
-        })}
-    </div>
+      <>
+        {props.answers.length > 0 && 
+          <Form.Group className="mb-3">
+              <Form.Label>Варианты ответов (<b>правильные ответ(ы) выделите галочкой слева от ответа</b>)
+            </Form.Label></Form.Group>}
+        <Form.Group className="mb-3">
+          {props.answers.map((item, index) => {
+            return (
+              <div key={item.id}>
+                <InputGroup className="mt-3 InputAnswers">
+                  <InputGroup.Checkbox defaultChecked={item.correct}
+                    onChange={(e) => props.updateAnswerCorrect(e.target.checked, index)} />
+                  <Form.Control placeholder="Введите ответ" defaultValue={item.name} autoFocus={item.name.length == 0}
+                    onChange={(e) => props.updateAnswerText(e.target.value, index)}
+                    onKeyDown={event => {
+                        if (event.key === "Enter" && props.answers.filter(i => i.name.length == 0).length == 0) {
+                            document.getElementById('add_answer_button').click()
+                        }
+                    } }
+                    isInvalid={props.validated && item.name.length == 0} />
+                  <CloseButton className="closeButton" onClick={() => props.deleteAnswer(index)} />
+                  <Form.Control.Feedback type="invalid">Необходимо ввести текст ответа</Form.Control.Feedback>
+                </InputGroup>
+              </div>
+            );
+          })}
+        </Form.Group>
+      </>
     );
   }
   
