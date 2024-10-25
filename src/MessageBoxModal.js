@@ -9,6 +9,7 @@ function MessageBoxModal(props) {
             onHide={props.onCancel}
             backdrop="static"
             keyboard={true}
+            centered
         >
         <Modal.Header closeButton>
         <Modal.Title>{props.title}</Modal.Title>

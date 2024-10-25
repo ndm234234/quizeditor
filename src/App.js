@@ -29,7 +29,7 @@ const useEscape = (onEscape) => {
 }
 
 function App() {
-  const pageSize = 5; // show row in table
+  const pageSize = 10; // show row in table
   const [title, setTitle] = useState("");
   const [answers, setAnswers] = useState(null);
   const [question, setQuestion] = useState("Текст вопроса");
@@ -126,7 +126,9 @@ function App() {
     setAnswers(newArray);
   }
 
-  const filteredData = customData.items.filter((item) => item.question.toLowerCase().includes(searchFilter.toLowerCase()));
+  const filteredData = customData.items.filter((item) => item.question.toLowerCase().includes(searchFilter.toLowerCase()) || 
+                                                         item.category.toLowerCase().includes(searchFilter.toLowerCase()));
+                                                         
   const paginatedData = filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   useEffect(() => {

@@ -6,6 +6,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import CustomPagination from './CustomPagination';
 import Button from "react-bootstrap/Button";
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Dropdown from 'react-bootstrap/Dropdown';
 
 import { JSONToFile } from './tools.js';
 import MessageBoxModal from './MessageBoxModal.js';
@@ -59,14 +60,17 @@ function QuestionTable(props) {
             <Button variant="primary" onClick={() => { setShowConfirmModalQuery(true); }}>Новая/Сбросить</Button>
           </ButtonGroup>
           <ButtonGroup className="me-2">
-            <Button variant="primary" onClick={() => document.getElementById('fileInput').click()}>Загрузить файл</Button>
-          </ButtonGroup>
-          <ButtonGroup className="me-2">
-            <Button variant="primary" onClick={() => {
+            <Dropdown>
+              <Dropdown.Toggle variant="primary" id="dropdown-basic">Файл</Dropdown.Toggle>
+              <Dropdown.Menu>
+              <Dropdown.Item onClick={() => document.getElementById('fileInput').click()}>Загрузить</Dropdown.Item>
+              <Dropdown.Item  onClick={() => {
                 var data = props.customData;
                 data.title = props.title;
                 JSONToFile(data, props.title.length > 0 ? props.title + ".txt" : props.fileName)
-              }}>Сохранить файл</Button>
+              }}>Сохранить</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </ButtonGroup>
       </Form.Group>
       <InputGroup className="mb-3">
