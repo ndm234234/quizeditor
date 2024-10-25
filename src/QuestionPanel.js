@@ -12,6 +12,7 @@ function QuestionPanel(props) {
 
   const checkItem = (item) => {
     return item.question.length > 0 &&
+           item.options.length > 0 &&
            item.options.filter(i => i.length == 0).length == 0 &&
            item.score > 0 &&
            item.category.length > 0;
