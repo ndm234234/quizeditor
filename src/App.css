@@ -73,3 +73,9 @@
   text-align: center !important;
 }
 
+.invalidAsnwers {
+  width: 100%;
+  margin-top: 0.25rem !important;
+  font-size: 0.875em !important;
+  color: var(--bs-form-invalid-color) !important;
+}

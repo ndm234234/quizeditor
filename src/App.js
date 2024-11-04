@@ -34,8 +34,8 @@ function App() {
   const [title, setTitle] = useState("");
   const [answers, setAnswers] = useState(null);
   const [question, setQuestion] = useState("Текст вопроса");
-  const [category, setCategory] = useState("История");
-  const [score, setScore] = useState(30);
+  const [category, setCategory] = useState("Новая категория");
+  const [score, setScore] = useState(10);
   const [info, setInfo] = useState("");
   const [infoImg, setInfoImg] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -66,7 +66,7 @@ function App() {
   };
 
   const createNewQuestion = () => {
-    setScore(30);
+    setScore(10);
     setQuestion("");
     setAnswers(new Array());
     setInfo("");

@@ -29,9 +29,10 @@ function QuestionPanel(props) {
         <InputGroup.Text>Категория вопроса</InputGroup.Text>
         <Form.Control 
           value={props.category}
+          placeholder="Введите категорию"
           isInvalid={validated && props.category.length == 0}
           onChange={e => props.setCategory(e.target.value)} />
-      <Form.Control.Feedback type="invalid">Необходимо ввести название категории</Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">Необходимо ввести название категории</Form.Control.Feedback>
       </InputGroup>
       <InputGroup className="mb-3">
         <InputGroup.Text>Очки</InputGroup.Text>
@@ -56,11 +57,12 @@ function QuestionPanel(props) {
       <div>
         <AnswersDisplay answers={props.answers} 
                         updateAnswerText={props.updateAnswerText} 
-                        updateAnswerCorrect={props.updateAnswerCorrect} deleteAnswer={props.deleteAnswer}
+                        updateAnswerCorrect={props.updateAnswerCorrect} 
+                        deleteAnswer={props.deleteAnswer}
                         validated={validated} />
         <Form.Group className="mb-3">
             <Button id="add_answer_button" onClick={() => {
-              props.setAnswers(answers => [...answers, { name: "", correct: 0, id: uuid() }]);
+              props.setAnswers(answers => [...answers, { name: "", correct: false, id: uuid() }]);
               } }>Добавить ответ</Button>
         </Form.Group>              
       </div>
@@ -106,17 +108,21 @@ function QuestionPanel(props) {
   }
   
   function AnswersDisplay(props) {
+    const checkAnswers = () => {
+      return props.answers.filter((i) => i.name.length > 0).length > 1 &&
+             props.answers.filter((i) => i.name.length > 0 && i.correct == true).length > 0;
+    }
+  
     return (
       <>
-        {props.answers.length > 0 && 
           <Form.Group className="mb-3">
-              <Form.Label>Варианты ответов (<b>правильные ответ(ы) выделите галочкой слева от ответа</b>)
-            </Form.Label></Form.Group>}
-        <Form.Group className="mb-3">
+          {props.answers.length > 0 && 
+                <Form.Label>Варианты ответов (<b>правильные ответ(ы) выделите галочкой слева от ответа</b>)</Form.Label>}
           {props.answers.map((item, index) => {
             return (
               <div key={item.id}>
-                <InputGroup className="mt-3 InputAnswers">
+              <Form.Group className="mb-3">
+                <InputGroup className="InputAnswers">
                   <InputGroup.Checkbox defaultChecked={item.correct}
                     onChange={(e) => props.updateAnswerCorrect(e.target.checked, index)} />
                   <Form.Control placeholder="Введите ответ" defaultValue={item.name} autoFocus={item.name.length == 0}
@@ -130,9 +136,11 @@ function QuestionPanel(props) {
                   <CloseButton className="closeButton" onClick={() => props.deleteAnswer(index)} />
                   <Form.Control.Feedback type="invalid">Необходимо ввести текст ответа</Form.Control.Feedback>
                 </InputGroup>
+              </Form.Group>
               </div>
             );
           })}
+          {!checkAnswers() && <Form.Text id="passwordHelpBlock" className="invalidAsnwers">Необходимо наличие не менее 2 вариантов ответов и не менее 1 правильного ответа</Form.Text>}
         </Form.Group>
       </>
     );
