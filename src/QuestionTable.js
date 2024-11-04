@@ -12,7 +12,8 @@ import { JSONToFile } from './tools.js';
 import MessageBoxModal from './MessageBoxModal.js';
 
 function QuestionTable(props) {
-  const [showConfirmModalQuery, setShowConfirmModalQuery] = useState(false);
+  const [showConfirmModalQueryNew, setShowConfirmModalQueryNew] = useState(false);
+  const [showConfirmModalQueryLoad, setShowConfirmModalQueryLoad] = useState(false);
 
   function updateData(data) {
     props.setData(data);
@@ -27,11 +28,16 @@ function QuestionTable(props) {
     var r = new FileReader();
     r.onload = function(e) { 
         let data = JSON.parse(e.target.result);
-        updateData(data);
+        createNewQuiz(data);
         event.target.value = null;
       }
     r.readAsText(file);
     }
+  }
+
+  function createNewQuiz(data = { title : "", items : new Array()}) {
+    updateData(data);
+    props.setHasUnsavedChanges(false);
   }
 
   if (!props.visible) 
@@ -41,33 +47,53 @@ function QuestionTable(props) {
   else
   return (
     <>
-      <MessageBoxModal show={showConfirmModalQuery}  
+      <MessageBoxModal show={showConfirmModalQueryNew}  
                        title="Создание"
                        query="Создать новую викторину? Все несохраненные данные будут потеряны."
-                       cancelButton="Отмена"
                        okButton="Создать"
-                       onCancel={()=> { setShowConfirmModalQuery(false); }} 
+                       onCancel={()=> { setShowConfirmModalQueryNew(false); }} 
                        OnOk={()=> {
-                           setShowConfirmModalQuery(false);
-                           updateData({ title : "", items : new Array()});
-                       }}   />
+                           setShowConfirmModalQueryNew(false);
+                           createNewQuiz(); }} />
+
+      <MessageBoxModal show={showConfirmModalQueryLoad}  
+                       title="Есть несохраненные данные"
+                       query="Загрузить новую викторину? Все несохраненные данные будут потеряны."
+                       okButton="Загрузить"
+                       onCancel={()=> { setShowConfirmModalQueryLoad(false); }} 
+                       OnOk={()=> {
+                          setShowConfirmModalQueryLoad(false);
+                          document.getElementById('fileInput').click() }} />
 
       <Form.Group className="mb-3">
         <Form.Control type="file" id="fileInput" 
           accept=".txt,.json"
           onChange={handleChange}  style={{ display: 'none' }}  />
           <ButtonGroup className="me-2">
-            <Button variant="primary" onClick={() => { setShowConfirmModalQuery(true); }}>Новая/Сбросить</Button>
+            <Button variant="primary" onClick={() => {
+                if (!props.hasUnsavedChanges) {
+                  createNewQuiz();
+                } else {
+                  setShowConfirmModalQueryNew(true);
+                }
+              }}>Новая/Сбросить</Button>
           </ButtonGroup>
           <ButtonGroup className="me-2">
             <Dropdown>
               <Dropdown.Toggle variant="primary" id="dropdown-basic">Файл</Dropdown.Toggle>
               <Dropdown.Menu>
-              <Dropdown.Item onClick={() => document.getElementById('fileInput').click()}>Загрузить</Dropdown.Item>
-              <Dropdown.Item  onClick={() => {
+              <Dropdown.Item onClick={() => {
+                 if (props.hasUnsavedChanges) {
+                   setShowConfirmModalQueryLoad(true);
+                 } else {
+                   document.getElementById('fileInput').click()
+                 }
+               }}>Загрузить</Dropdown.Item>
+              <Dropdown.Item disabled = {props.title.length == 0 || props.customData.items.length == 0} onClick={() => {
                 var data = props.customData;
                 data.title = props.title;
                 JSONToFile(data, props.title.length > 0 ? props.title + ".txt" : props.fileName)
+                props.setHasUnsavedChanges(false);
               }}>Сохранить</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
@@ -78,7 +104,10 @@ function QuestionTable(props) {
         <Form.Control
           placeholder='Название'
           value={props.title}
-          onChange={(e) => props.updateTitle(e.target.value)} />
+          onChange={(e) => {
+            props.updateTitle(e.target.value);
+            props.setHasUnsavedChanges(true);
+          }} />
       </InputGroup>
       <InputGroup className="mb-3">
         <InputGroup.Text>Фильтр</InputGroup.Text>

@@ -1,9 +1,8 @@
 import Modal from 'react-bootstrap/Modal'; 
 import Button from "react-bootstrap/Button";
 
-function MessageBoxModal(props) {
+function MessageBoxModal({cancelButton = "Отмена", ... props}) {
     return (
-    <div>
         <Modal
             show={props.show}
             onHide={props.onCancel}
@@ -11,18 +10,17 @@ function MessageBoxModal(props) {
             keyboard={true}
             centered
         >
-        <Modal.Header closeButton>
-        <Modal.Title>{props.title}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-            {props.query} 
-        </Modal.Body>
-        <Modal.Footer>
-        <Button variant="secondary" onClick={props.onCancel}>{props.cancelButton}</Button>
-        <Button variant="primary" onClick={props.OnOk}>{props.okButton}</Button>
-        </Modal.Footer>
+          <Modal.Header closeButton>
+          <Modal.Title>{props.title}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+              {props.query} 
+          </Modal.Body>
+          <Modal.Footer>
+          <Button variant="secondary" onClick={props.onCancel}>{cancelButton}</Button>
+          <Button variant="primary" onClick={props.OnOk}>{props.okButton}</Button>
+          </Modal.Footer>
         </Modal>
-      </div>
     );
   }
   

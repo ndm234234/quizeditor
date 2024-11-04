@@ -30,6 +30,7 @@ const useEscape = (onEscape) => {
 
 function App() {
   const pageSize = 10; // show row in table
+  const titleBase = "Конструктор викторин";
   const [title, setTitle] = useState("");
   const [answers, setAnswers] = useState(null);
   const [question, setQuestion] = useState("Текст вопроса");
@@ -41,26 +42,24 @@ function App() {
   const [searchFilter, setSearchFilter] = useState(""); 
   const [showQuestionDetail, setShowQuestionDetail] = useState(false)  
   const [fileName, setFileName] = useState("New.txt")
-  const [showModalQuery, setShowModalQuery] = useState(false);
+  const [showModalQueryDelete, setShowModalQueryDelete] = useState(false);
 
   const [indexToDelete, setIndexToDelete] = useState(-1);
   const [itemToDelete, setItemToDelete] = useState("");
 
   const [customData, setCustomData] = useState({ title : "" , items : new Array() });
 
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
   const handleCloseModal = () => {
-      if (indexToDelete != -1)
-      {
+      if (indexToDelete != -1) {
         customData.items.splice(indexToDelete, 1);
         setIndexToDelete(-1);
         setItemToDelete("");
+        setHasUnsavedChanges(true);
       }
-      setShowModalQuery(false);
+      setShowModalQueryDelete(false);
     }
-
-  const handleCancelModal = () => {
-    setShowModalQuery(false);
-  }
 
   const handleFilter = (e) => {
     setSearchFilter(e.target.value);
@@ -85,6 +84,7 @@ function App() {
     else {
       customData.items[index] = item;
     }
+    setHasUnsavedChanges(true);
   }
 
   const deleteQuestion = (item) => {
@@ -92,7 +92,7 @@ function App() {
     setIndexToDelete(index);
     setItemToDelete(item.question);
     if (index != -1) {
-      setShowModalQuery(true);
+      setShowModalQueryDelete(true);
     }
   };
 
@@ -135,18 +135,20 @@ function App() {
     setCurrentPage(1);
   }, []);
 
-  useEscape(() => { setShowQuestionDetail(false);});
+  useEffect(() => {
+    document.title = (hasUnsavedChanges ? "* " : "") + titleBase + (title.length > 0 ? " [" + title + "]" : "");
+  }, [title, hasUnsavedChanges]);
 
+  useEscape(() => { setShowQuestionDetail(false);});
 
   return (
     <div className="App">
 
-  <MessageBoxModal show={showModalQuery}  
+  <MessageBoxModal show={showModalQueryDelete}  
                    title="Удаление"
                    query={itemToDelete}
-                   cancelButton="Отмена"
                    okButton="Удалить"
-                   onCancel={handleCancelModal} 
+                   onCancel={() => setShowModalQueryDelete(false)} 
                    OnOk={handleCloseModal}   />
 
   <QuestionTable visible={!showQuestionDetail} 
@@ -162,6 +164,8 @@ function App() {
                  setFileName={setFileName}
                  customData={customData}
                  title={title}
+                 hasUnsavedChanges={hasUnsavedChanges}
+                 setHasUnsavedChanges={setHasUnsavedChanges}
                  updateTitle={setTitle}
                  setData={(data) => {
                     setCustomData(data);
