@@ -90,7 +90,7 @@ function QuestionTable(props) {
                  }
                }}>Загрузить</Dropdown.Item>
               <Dropdown.Item disabled = {props.title.length == 0 || props.customData.items.length == 0} onClick={() => {
-                var data = props.customData;
+                let data = props.customData;
                 data.title = props.title;
                 JSONToFile(data, props.title.length > 0 ? props.title + ".txt" : props.fileName)
                 props.setHasUnsavedChanges(false);

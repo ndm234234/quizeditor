@@ -54,6 +54,12 @@ function QuestionPanel(props) {
           onChange={e => props.setQuestion(e.target.value)} />
           <Form.Control.Feedback type="invalid">Необходимо ввести вопрос</Form.Control.Feedback>
       </InputGroup>
+      <Form.Group className="mb-3">
+        <Form.Label>Изображение к вопросу</Form.Label>
+        <Form.Control placeholder="Название файла картинки или ссылка"
+          value={props.questionImage != null ? props.questionImage : ""}
+          onChange={e => props.setQuestionImage(e.target.value)} />
+      </Form.Group>
       <div>
         <AnswersDisplay answers={props.answers} 
                         updateAnswerText={props.updateAnswerText} 
@@ -84,6 +90,7 @@ function QuestionPanel(props) {
                   var item = 
                   {
                       question : props.question,
+                      questionImage : props.questionImage,
                       options : props.answers.map((item) => { return item.name;  }),
                       answers : props.answers.map((item, index) =>  { return { item : item, index : index}; }).filter((item) => item.item.correct).map((item) => {
                               return item.index;

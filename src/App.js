@@ -34,6 +34,7 @@ function App() {
   const [title, setTitle] = useState("");
   const [answers, setAnswers] = useState(null);
   const [question, setQuestion] = useState("Текст вопроса");
+  const [questionImage, setQuestionImage] = useState("");
   const [category, setCategory] = useState("Новая категория");
   const [score, setScore] = useState(10);
   const [info, setInfo] = useState("");
@@ -68,6 +69,7 @@ function App() {
   const createNewQuestion = () => {
     setScore(10);
     setQuestion("");
+    setQuestionImage("");
     setAnswers(new Array());
     setInfo("");
     setInfoImg("");
@@ -98,6 +100,7 @@ function App() {
 
  const showQuestion = (item) => {
     setQuestion(item.question);
+    setQuestionImage(item.questionImage);
     const answers = new Set(item.answers);
     var newArray = item.options.map((value, index) => { return { name : value, correct : answers.has(index) ? 1 : 0,  id : uuid() }; });
     setAnswers(newArray);
@@ -176,6 +179,7 @@ function App() {
                   category={category} setCategory={setCategory} 
                   score={score} setScore={setScore}
                   question={question} setQuestion={setQuestion}
+                  questionImage={questionImage} setQuestionImage={setQuestionImage}
                   answers={answers} setAnswers={setAnswers} 
                   deleteAnswer={deleteAnswer}
                   updateAnswerText={updateAnswerText}
