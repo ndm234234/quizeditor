@@ -13,7 +13,7 @@ function QuestionPanel(props) {
   const checkItem = (item) => {
     return item.question.length > 0 &&
            item.options.length > 1 &&
-           item.options.filter(i => i.length == 0).length == 0 &&
+           item.options.filter(i => i.name.length == 0).length == 0 &&
            item.answers.length > 0 &&
            item.score > 0 &&
            item.category.length > 0;
@@ -63,6 +63,7 @@ function QuestionPanel(props) {
       <div>
         <AnswersDisplay answers={props.answers} 
                         updateAnswerText={props.updateAnswerText} 
+                        updateAnswerImg={props.updateAnswerImg}
                         updateAnswerCorrect={props.updateAnswerCorrect} 
                         deleteAnswer={props.deleteAnswer}
                         validated={validated} />
@@ -91,7 +92,7 @@ function QuestionPanel(props) {
                   {
                       question : props.question,
                       questionImage : props.questionImage,
-                      options : props.answers.map((item) => { return item.name;  }),
+                      options : props.answers.map((item) => { return { name : item.name, img : item.img }  }),
                       answers : props.answers.map((item, index) =>  { return { item : item, index : index}; }).filter((item) => item.item.correct).map((item) => {
                               return item.index;
                           }),
@@ -140,6 +141,10 @@ function QuestionPanel(props) {
                         }
                     } }
                     isInvalid={props.validated && item.name.length == 0} />
+                   <InputGroup.Text>Изображение к ответу</InputGroup.Text>
+                   <Form.Control placeholder="Название файла картинки или ссылка" defaultValue={item.img}
+                      onChange={(e) => props.updateAnswerImg(e.target.value, index)}
+                  />
                   <CloseButton className="closeButton" onClick={() => props.deleteAnswer(index)} />
                   <Form.Control.Feedback type="invalid">Необходимо ввести текст ответа</Form.Control.Feedback>
                 </InputGroup>

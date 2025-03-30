@@ -16,8 +16,41 @@ function QuestionTable(props) {
   const [showConfirmModalQueryLoad, setShowConfirmModalQueryLoad] = useState(false);
 
   function updateData(data) {
-    props.setData(data);
-    props.updateTitle(data.title);
+
+    let oldFormat = false;
+    var result =  data.items.map((item) => {
+      let options = item.options.map((option) => {
+        if (typeof option == "string") {
+            oldFormat = true;
+            return { name : option }
+        }
+        else {
+          return option;
+        }
+      });
+
+      return  {
+              answers : item.answers,
+              category : item.category,
+              info : item.info,
+              info_img : item.info_img,
+              question : item.question,
+              questionImage : item.questionImage,
+              score : item.score,
+              options : options
+        }
+    });
+
+    var newData = 
+    {
+      title : data.title,
+      items : result
+    };
+
+    props.setData(newData);
+    props.updateTitle(newData.title);
+
+    return oldFormat;
   }
 
   function handleChange(event) {
@@ -36,8 +69,8 @@ function QuestionTable(props) {
   }
 
   function createNewQuiz(data = { title : "", items : new Array()}) {
-    updateData(data);
-    props.setHasUnsavedChanges(false);
+    const needUpdate = updateData(data);
+    props.setHasUnsavedChanges(needUpdate);
   }
 
   if (!props.visible) 

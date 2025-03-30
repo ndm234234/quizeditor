@@ -102,7 +102,7 @@ function App() {
     setQuestion(item.question);
     setQuestionImage(item.questionImage);
     const answers = new Set(item.answers);
-    var newArray = item.options.map((value, index) => { return { name : value, correct : answers.has(index) ? 1 : 0,  id : uuid() }; });
+    var newArray = item.options.map((value, index) => { return { name : value.name, img : value.img,  correct : answers.has(index) ? 1 : 0,  id : uuid() }; });
     setAnswers(newArray);
     setCategory(item.category);
     setScore(item.score);
@@ -121,6 +121,12 @@ function App() {
   function updateAnswerText(text, index) {
     var newArray = answers.slice();
     newArray[index].name = text;
+    setAnswers(newArray);
+  }
+
+  function updateAnswerImg(img, index) {
+    var newArray = answers.slice();
+    newArray[index].img = img;
     setAnswers(newArray);
   }
 
@@ -183,6 +189,7 @@ function App() {
                   answers={answers} setAnswers={setAnswers} 
                   deleteAnswer={deleteAnswer}
                   updateAnswerText={updateAnswerText}
+                  updateAnswerImg={updateAnswerImg}
                   updateAnswerCorrect={updateAnswerCorrect}
                   info={info} setInfo={setInfo}
                   infoImg={infoImg} setInfoImg={setInfoImg}
