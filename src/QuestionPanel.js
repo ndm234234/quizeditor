@@ -4,8 +4,13 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import CloseButton from 'react-bootstrap/CloseButton';
 import Button from "react-bootstrap/Button";
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import ImageControl from "./ImageControl";
 
 import { uuid } from './tools.js';
+
+const simpleBase64 =
+  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzAwYWZmMCIvPgo8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIxOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZpbGw9IndoaXRlIj5IZWxsbyE8L3RleHQ+Cjwvc3ZnPgo=";
+
 
 function QuestionPanel(props) {
   const [validated, setValidated] = useState(true);
@@ -56,9 +61,12 @@ function QuestionPanel(props) {
       </InputGroup>
       <Form.Group className="mb-3">
         <Form.Label>Изображение к вопросу</Form.Label>
-        <Form.Control placeholder="Название файла картинки или ссылка"
-          value={props.questionImage != null ? props.questionImage : ""}
-          onChange={e => props.setQuestionImage(e.target.value)} />
+        <div>
+          <ImageControl сlassName=".input-group" initialImage={props.questionImage != null ? props.questionImage : ""}
+                        onChange={
+                          e => props.setQuestionImage(e)}
+                        />
+        </div>
       </Form.Group>
       <div>
         <AnswersDisplay answers={props.answers} 
@@ -81,9 +89,11 @@ function QuestionPanel(props) {
       </Form.Group>
       <Form.Group className="mb-3">
         <Form.Label>Изображение</Form.Label>
-        <Form.Control placeholder="Название файла картинки или ссылка"
-          value={props.infoImg != null ? props.infoImg : ""}
-          onChange={e => props.setInfoImg(e.target.value)} />
+        <div>
+          <ImageControl initialImage={props.infoImg != null ? props.infoImg : ""}
+                        onChange={e => props.setInfoImg(e)}
+                        />
+        </div>
       </Form.Group>
       <Form.Group className="mb-3">
           <ButtonGroup className="me-2">
@@ -141,10 +151,11 @@ function QuestionPanel(props) {
                         }
                     } }
                     isInvalid={props.validated && item.name.length == 0} />
-                   <InputGroup.Text>Изображение к ответу</InputGroup.Text>
-                   <Form.Control placeholder="Название файла картинки или ссылка" defaultValue={item.img}
-                      onChange={(e) => props.updateAnswerImg(e.target.value, index)}
-                  />
+                    <div>
+                      <ImageControl  initialImage={item.img != null ? item.img : ""}
+                                    onChange={e => props.updateAnswerImg(e, index)}
+                                    />
+                    </div>
                   <CloseButton className="closeButton" onClick={() => props.deleteAnswer(index)} />
                   <Form.Control.Feedback type="invalid">Необходимо ввести текст ответа</Form.Control.Feedback>
                 </InputGroup>
