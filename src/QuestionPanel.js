@@ -8,10 +8,6 @@ import ImageControl from "./ImageControl";
 
 import { uuid } from './tools.js';
 
-const simpleBase64 =
-  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzAwYWZmMCIvPgo8dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIxOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZpbGw9IndoaXRlIj5IZWxsbyE8L3RleHQ+Cjwvc3ZnPgo=";
-
-
 function QuestionPanel(props) {
   const [validated, setValidated] = useState(true);
 
@@ -62,8 +58,8 @@ function QuestionPanel(props) {
       <Form.Group className="mb-3">
         <Form.Label>Изображение к вопросу</Form.Label>
         <div>
-          <ImageControl сlassName=".input-group" initialImage={props.questionImage != null ? props.questionImage : ""}
-                        onChange={
+            <ImageControl initialImage={props.questionImage != null ? props.questionImage : ""}
+                          onChange={
                           e => props.setQuestionImage(e)}
                         />
         </div>
@@ -88,7 +84,7 @@ function QuestionPanel(props) {
             onChange={e => props.setInfo(e.target.value)}/>
       </Form.Group>
       <Form.Group className="mb-3">
-        <Form.Label>Изображение</Form.Label>
+        <Form.Label>Изображение к правильному ответу</Form.Label>
         <div>
           <ImageControl initialImage={props.infoImg != null ? props.infoImg : ""}
                         onChange={e => props.setInfoImg(e)}
@@ -151,11 +147,11 @@ function QuestionPanel(props) {
                         }
                     } }
                     isInvalid={props.validated && item.name.length == 0} />
-                    <div>
-                      <ImageControl  initialImage={item.img != null ? item.img : ""}
-                                    onChange={e => props.updateAnswerImg(e, index)}
-                                    />
-                    </div>
+                  <div>
+                  <ImageControl initialImage={item.img != null ? item.img : ""}
+                                onChange={e => props.updateAnswerImg(e, index)}
+                                />
+                  </div>
                   <CloseButton className="closeButton" onClick={() => props.deleteAnswer(index)} />
                   <Form.Control.Feedback type="invalid">Необходимо ввести текст ответа</Form.Control.Feedback>
                 </InputGroup>

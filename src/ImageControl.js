@@ -94,7 +94,7 @@ const ImageControl = forwardRef(
         // Если не получилось через fetch/canvas, пробуем напрямую
         if (isGif) {
           // Для GIF показываем предупреждение
-          alert('GIF загружен напрямую, но могут быть CORS ограничения при дальнейшей обработке');
+          alert('GIF загружен напрямую, будет использоваться ссылка. Для сохранения в файле загрузите изображение с диска.');
           setCurrentImage(url);
           onChange?.(url, { type: 'url', direct: true });
         } else {
@@ -199,10 +199,10 @@ const ImageControl = forwardRef(
 
     return (
       <div className="container-fluid">
-        <div className="row">
+        <div className="row g-1">
           {/* Левая панель - предпросмотр */}
           <div className="col-md-6 d-flex">
-            <div className="card w-100" style={{ maxHeight, overflow: "hidden" }}>
+            <div className="card w-100 rounded-1" style={{ maxHeight, overflow: "hidden" }}>
               <div className="card-body p-2 d-flex flex-column">
                 {isLoading ? (
                   <div className="flex-grow-1 d-flex align-items-center justify-content-center">
@@ -237,7 +237,7 @@ const ImageControl = forwardRef(
 
           {/* Правая панель - управление */}
           <div className="col-md-6 d-flex">
-            <div className="card w-100" style={{ maxHeight, overflow: "hidden" }}>
+            <div className="card w-100 rounded-1" style={{ maxHeight, overflow: "hidden" }}>
               <div className="card-body p-2 d-flex flex-column">
                 <div className="mb-2">
                   <input
@@ -257,7 +257,7 @@ const ImageControl = forwardRef(
                   />
                   <div className="d-flex gap-1">
                     <Button
-                      className="btn btn-primary btn-sm flex-fill"
+                      className="btn btn-primary btn-sm flex-fill  w-100"
                       onClick={handleUrlLoad}
                       disabled={isLoading || !imageUrl.trim()}
                     >
@@ -271,36 +271,23 @@ const ImageControl = forwardRef(
                       )}
                     </Button>
                     <Button
-                    className="btn btn-primary btn-sm flex-fill"
-/*                      className="btn btn-outline-secondary btn-sm flex-fill"*/
+                    className="btn btn-primary btn-sm flex-fill  w-100"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isLoading}
                     >
                       📁 Файл
                     </Button>
-                  </div>
-                  
-                  {imageUrl.toLowerCase().includes('.gif') && (
-                    <div className="alert alert-warning small mt-1 mb-0 py-1">
-                      <small>
-                        ⚠️ GIF по URL могут не загрузиться из-за CORS. 
-                        Рекомендуем использовать загрузку файлом.
-                      </small>
-                    </div>
-                  )}
-                </div>
-
-                {currentImage && (
-                  <div className="mt-auto">
-                    <Button
-                      className="btn btn-outline btn-sm w-100"
+                    {currentImage && (
+                      <Button
+                      className="btn btn-primary btn-sm flex-fill  w-100"
                       onClick={handleClear}
                       disabled={isLoading}
                     >
                       ✕ Очистить
                     </Button>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </div>

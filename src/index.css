@@ -14,7 +14,3 @@ code {
     monospace;
 }
 
-.transparent-card {
-  background-color: transparent !important;
-  border: none !important;
-}
