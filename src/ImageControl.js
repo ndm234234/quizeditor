@@ -62,7 +62,15 @@ const convertViaCanvas = (url) => {
 };
 
 const ImageControl = forwardRef(
-  ({ initialImage = null, onChange = null, maxHeight = "280px" }, ref) => {
+  ({ 
+    initialImage = null, 
+    onChange = null, 
+    maxHeight = "280px",
+    noPadding = false, // Новый пропс для управления внешними отступами
+    className = "", // Дополнительные классы
+    style = {}, // Дополнительные стили
+    ...props 
+  }, ref) => {
     const [imageUrl, setImageUrl] = useState("");
     const [currentImage, setCurrentImage] = useState(initialImage);
     const [isLoading, setIsLoading] = useState(false);
@@ -197,12 +205,34 @@ const ImageControl = forwardRef(
       clearImage: handleClear,
     }));
 
+    // Формируем стили для контейнера в зависимости от noPadding
+    const containerStyle = {
+      width: '100%', // Всегда занимает всю доступную ширину
+      ...(noPadding && {
+        paddingLeft: 0,
+        paddingRight: 0,
+        marginLeft: 0,
+        marginRight: 0
+      }),
+      ...style // Позволяет переопределить стили снаружи
+    };
+
+    // Формируем классы для контейнера
+    const containerClass = `container-fluid ${className}`;
+
     return (
-      <div className="container-fluid">
+      <div 
+        className={containerClass}
+        style={containerStyle}
+        {...props}
+      >
         <div className="row g-1">
           {/* Левая панель - предпросмотр */}
           <div className="col-md-6 d-flex">
-            <div className="card w-100 rounded-1" style={{ maxHeight, overflow: "hidden" }}>
+            <div className="card w-100 rounded-1" style={{ 
+              maxHeight, 
+              overflow: "hidden",
+            }}>
               <div className="card-body p-2 d-flex flex-column">
                 {isLoading ? (
                   <div className="flex-grow-1 d-flex align-items-center justify-content-center">
@@ -237,7 +267,10 @@ const ImageControl = forwardRef(
 
           {/* Правая панель - управление */}
           <div className="col-md-6 d-flex">
-            <div className="card w-100 rounded-1" style={{ maxHeight, overflow: "hidden" }}>
+            <div className="card w-100 rounded-1" style={{ 
+              maxHeight, 
+              overflow: "hidden",
+            }}>
               <div className="card-body p-2 d-flex flex-column">
                 <div className="mb-2">
                   <input
@@ -257,7 +290,7 @@ const ImageControl = forwardRef(
                   />
                   <div className="d-flex gap-1">
                     <Button
-                      className="btn btn-primary btn-sm flex-fill  w-100"
+                      className="btn btn-primary btn-sm flex-fill w-100"
                       onClick={handleUrlLoad}
                       disabled={isLoading || !imageUrl.trim()}
                     >
@@ -271,7 +304,7 @@ const ImageControl = forwardRef(
                       )}
                     </Button>
                     <Button
-                    className="btn btn-primary btn-sm flex-fill  w-100"
+                      className="btn btn-primary btn-sm flex-fill w-100"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isLoading}
                     >
@@ -279,12 +312,12 @@ const ImageControl = forwardRef(
                     </Button>
                     {currentImage && (
                       <Button
-                      className="btn btn-primary btn-sm flex-fill  w-100"
-                      onClick={handleClear}
-                      disabled={isLoading}
-                    >
-                      ✕ Очистить
-                    </Button>
+                        className="btn btn-primary btn-sm flex-fill w-100"
+                        onClick={handleClear}
+                        disabled={isLoading}
+                      >
+                        ✕ Очистить
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -296,5 +329,7 @@ const ImageControl = forwardRef(
     );
   }
 );
+
+ImageControl.displayName = 'ImageControl';
 
 export default ImageControl;

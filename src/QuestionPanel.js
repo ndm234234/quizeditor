@@ -61,6 +61,7 @@ function QuestionPanel(props) {
             <ImageControl initialImage={props.questionImage != null ? props.questionImage : ""}
                           onChange={
                           e => props.setQuestionImage(e)}
+                          noPadding={true}
                         />
         </div>
       </Form.Group>
@@ -88,6 +89,7 @@ function QuestionPanel(props) {
         <div>
           <ImageControl initialImage={props.infoImg != null ? props.infoImg : ""}
                         onChange={e => props.setInfoImg(e)}
+                        noPadding={true}
                         />
         </div>
       </Form.Group>
