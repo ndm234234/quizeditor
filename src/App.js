@@ -34,6 +34,7 @@ function App() {
   const [title, setTitle] = useState("");
   const [answers, setAnswers] = useState(null);
   const [question, setQuestion] = useState("Текст вопроса");
+  const [savedQuestion, setSavedQuestion] = useState("");
   const [questionImage, setQuestionImage] = useState("");
   const [category, setCategory] = useState("Новая категория");
   const [score, setScore] = useState(10);
@@ -44,6 +45,9 @@ function App() {
   const [showQuestionDetail, setShowQuestionDetail] = useState(false)  
   const [fileName, setFileName] = useState("New.txt")
   const [showModalQueryDelete, setShowModalQueryDelete] = useState(false);
+
+  const [showConfirmModalQueryConflict, setShowConfirmModalQueryConflict] = useState('');
+  const [itemToSave, setItemToSave] = useState(null);
 
   const [indexToDelete, setIndexToDelete] = useState(-1);
   const [itemToDelete, setItemToDelete] = useState("");
@@ -69,6 +73,7 @@ function App() {
   const createNewQuestion = () => {
     setScore(10);
     setQuestion("");
+    setSavedQuestion("");
     setQuestionImage("");
     setAnswers(new Array());
     setInfo("");
@@ -77,6 +82,11 @@ function App() {
   }
 
   const createOrUpdateQuestion = (item) => {
+    const indexToDelete = customData.items.findIndex(i => i.question == item.savedQuestion);
+    if (indexToDelete != -1) {
+        customData.items.splice(indexToDelete, 1);
+    }
+
     const index = customData.items.findIndex(i => i.question == item.question);
     if (index == -1) {
       customData.items.push(item);
@@ -100,6 +110,7 @@ function App() {
 
  const showQuestion = (item) => {
     setQuestion(item.question);
+    setSavedQuestion(item.question);
     setQuestionImage(item.questionImage);
     const answers = new Set(item.answers);
     var newArray = item.options.map((value, index) => { return { name : value.name, img : value.img,  correct : answers.has(index) ? 1 : 0,  id : uuid() }; });
@@ -148,10 +159,40 @@ function App() {
     document.title = (hasUnsavedChanges ? "* " : "") + titleBase + (title.length > 0 ? " [" + title + "]" : "");
   }, [title, hasUnsavedChanges]);
 
-  useEscape(() => { setShowQuestionDetail(false);});
+  useEffect(() => {
+     // supress ecspace from MessageBoxModal
+     const handleEscape = (e) => {
+      if (e.key !== 'Escape') return;
+      
+      if (showConfirmModalQueryConflict.length > 0) {
+        return;
+      }
+      
+      setShowQuestionDetail(false);
+    };
 
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [showConfirmModalQueryConflict]); 
+  
   return (
-    <div className="App">
+  <div className="App">
+
+  <MessageBoxModal show={showConfirmModalQueryConflict.length > 0}  
+                   title={showConfirmModalQueryConflict}
+                   query={itemToDelete}
+                   okButton="Перезаписать"
+                   onCancel={() => {
+                    setShowConfirmModalQueryConflict('')}
+                   } 
+                  OnOk={() => {
+                    createOrUpdateQuestion(itemToSave);
+                    setShowQuestionDetail(false);
+                    handleCloseModal();
+                    setShowConfirmModalQueryConflict('');
+                  }} />
 
   <MessageBoxModal show={showModalQueryDelete}  
                    title="Удаление"
@@ -185,6 +226,7 @@ function App() {
                   category={category} setCategory={setCategory} 
                   score={score} setScore={setScore}
                   question={question} setQuestion={setQuestion}
+                  savedQuestion={savedQuestion} setSavedQuestion={setSavedQuestion}
                   questionImage={questionImage} setQuestionImage={setQuestionImage}
                   answers={answers} setAnswers={setAnswers} 
                   deleteAnswer={deleteAnswer}
@@ -194,8 +236,16 @@ function App() {
                   info={info} setInfo={setInfo}
                   infoImg={infoImg} setInfoImg={setInfoImg}
                   save ={(e) => {
-                    createOrUpdateQuestion(e);
-                    setShowQuestionDetail(false);
+                    if (e.savedQuestion != e.question) {
+                        const index = customData.items.findIndex(i => i.question == e.question);
+                        if (index != -1) {
+                          setItemToSave(e);
+                          setShowConfirmModalQueryConflict("Существует другой вопрос с названием '" + e.question + "'.");
+                          return;
+                        } 
+                      }
+                      createOrUpdateQuestion(e);
+                      setShowQuestionDetail(false);
                   }}
                   cancel={()=> {
                     setShowQuestionDetail(false);

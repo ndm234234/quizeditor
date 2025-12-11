@@ -52,7 +52,7 @@ function QuestionPanel(props) {
           autoFocus 
           isInvalid={validated && props.question.length == 0}
           value={props.question}
-          onChange={e => props.setQuestion(e.target.value)} />
+          onChange={e => props.setQuestion(e.target.value.trim())} />
           <Form.Control.Feedback type="invalid">Необходимо ввести вопрос</Form.Control.Feedback>
       </InputGroup>
       <Form.Group className="mb-3">
@@ -99,6 +99,7 @@ function QuestionPanel(props) {
                   var item = 
                   {
                       question : props.question,
+                      savedQuestion : props.savedQuestion,
                       questionImage : props.questionImage,
                       options : props.answers.map((item) => { return { name : item.name, img : item.img }  }),
                       answers : props.answers.map((item, index) =>  { return { item : item, index : index}; }).filter((item) => item.item.correct).map((item) => {

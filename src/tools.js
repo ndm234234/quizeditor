@@ -5,6 +5,25 @@ export function uuid() {
     return id
   }
 
+function removeFields(data, fieldsToRemove = ['savedQuestion']) {
+  if (Array.isArray(data)) {
+    return data.map(item => removeFields(item, fieldsToRemove));
+  } else if (data && typeof data === 'object') {
+    const result = {};
+    for (const [key, value] of Object.entries(data)) {
+      // Пропускаем указанные поля для удаления
+      if (fieldsToRemove.includes(key)) {
+        continue;
+      }
+      
+      // Просто рекурсивно обрабатываем вложенные значения
+      result[key] = removeFields(value, fieldsToRemove);
+    }
+    return result;
+  }
+  return data;
+}
+
 function clearImageFields(data) {
   if (Array.isArray(data)) {
       return data.map(item => clearImageFields(item));
@@ -32,6 +51,7 @@ export function JSONToFile(obj, filename) {
         URL.revokeObjectURL(link.href);
     };
 
-    download(obj, filename);
-    download(clearImageFields(obj), filename.replace(/\.(\w+)$/, '_debug.$1'));
+    const cleanedData = removeFields(obj, ['savedQuestion']);
+    download(cleanedData, filename);
+    download(clearImageFields(cleanedData), filename.replace(/\.(\w+)$/, '_debug.$1'));
 }
