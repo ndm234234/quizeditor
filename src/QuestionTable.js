@@ -134,6 +134,7 @@ function QuestionTable(props) {
             </Dropdown>
           </ButtonGroup>
       </Form.Group>
+
       <InputGroup className="mb-3">
         <InputGroup.Text>Название викторины</InputGroup.Text>
         <Form.Control
@@ -143,7 +144,12 @@ function QuestionTable(props) {
             props.updateTitle(e.target.value);
             props.setHasUnsavedChanges(true);
           }} />
+        <InputGroup.Text>Всего</InputGroup.Text>
+        <Form.Control
+          value={`${props.totalQuestions} вопросов, ${props.uniqueCategoriesCount} категорий`}
+          readOnly />
       </InputGroup>
+
       <InputGroup className="mb-3">
         <InputGroup.Text>Фильтр</InputGroup.Text>
         <Form.Control

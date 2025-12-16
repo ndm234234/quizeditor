@@ -50,17 +50,17 @@ function App() {
   const [itemToSave, setItemToSave] = useState(null);
 
   const [indexToDelete, setIndexToDelete] = useState(-1);
-  const [itemToDelete, setItemToDelete] = useState("");
+  const [questionNameToDelete, setQuestionNameToDelete] = useState("");
 
   const [customData, setCustomData] = useState({ title : "" , items : new Array() });
 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  const handleCloseModal = () => {
+  const deleteConfirmed = () => {
       if (indexToDelete != -1) {
         customData.items.splice(indexToDelete, 1);
         setIndexToDelete(-1);
-        setItemToDelete("");
+        setQuestionNameToDelete("");
         setHasUnsavedChanges(true);
       }
       setShowModalQueryDelete(false);
@@ -68,6 +68,10 @@ function App() {
 
   const handleFilter = (e) => {
     setSearchFilter(e.target.value);
+  };
+
+  const uniqueCategoriesCount = () => {
+    return new Set(customData.items.map(item => item.category)).size;
   };
 
   const createNewQuestion = () => {
@@ -102,7 +106,7 @@ function App() {
   const deleteQuestion = (item) => {
     const index = customData.items.findIndex(i => i.question == item.question);
     setIndexToDelete(index);
-    setItemToDelete(item.question);
+    setQuestionNameToDelete(item.question);
     if (index != -1) {
       setShowModalQueryDelete(true);
     }
@@ -181,8 +185,8 @@ function App() {
   <div className="App">
 
   <MessageBoxModal show={showConfirmModalQueryConflict.length > 0}  
-                   title={showConfirmModalQueryConflict}
-                   query={itemToDelete}
+                   title="Внимание"
+                   query={showConfirmModalQueryConflict}
                    okButton="Перезаписать"
                    cancelButton="Отмена"
                    onCancel={() => {
@@ -191,17 +195,17 @@ function App() {
                   onOk={() => {
                     createOrUpdateQuestion(itemToSave);
                     setShowQuestionDetail(false);
-                    handleCloseModal();
+                    deleteConfirmed();
                     setShowConfirmModalQueryConflict('');
                   }} />
 
   <MessageBoxModal show={showModalQueryDelete}  
-                   title="Удаление"
-                   query={itemToDelete}
+                   title="Удаление вопроса"
+                   query={questionNameToDelete}
                    okButton="Удалить"
                    cancelButton="Отмена"
                    onCancel={() => setShowModalQueryDelete(false)} 
-                   onOk={handleCloseModal}   />
+                   onOk={deleteConfirmed}   />
 
   <QuestionTable visible={!showQuestionDetail} 
                  searchFilter={searchFilter} 
@@ -216,6 +220,8 @@ function App() {
                  setFileName={setFileName}
                  customData={customData}
                  title={title}
+                 totalQuestions={customData.items.length}
+                 uniqueCategoriesCount={uniqueCategoriesCount()}
                  hasUnsavedChanges={hasUnsavedChanges}
                  setHasUnsavedChanges={setHasUnsavedChanges}
                  updateTitle={setTitle}
