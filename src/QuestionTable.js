@@ -34,6 +34,7 @@ function QuestionTable(props) {
         category: item.category,
         info: item.info,
         info_img: item.info_img,
+        ready: item.ready,
         question: item.question,
         questionImage: item.questionImage,
         score: item.score,
@@ -60,8 +61,14 @@ function QuestionTable(props) {
       props.setFileName(file.name);
       var r = new FileReader();
       r.onload = function (e) {
-        let data = JSON.parse(e.target.result);
-        createNewQuiz(data);
+        try {
+          let data = JSON.parse(e.target.result);
+          createNewQuiz(data);
+        }
+        catch(err) {
+           alert("Ошибка: файл повреждён или не является викториной.");
+           console.error(err);
+        }
         event.target.value = null;
       }
       r.readAsText(file);
@@ -145,9 +152,9 @@ function QuestionTable(props) {
               props.updateTitle(e.target.value);
               props.setHasUnsavedChanges(true);
             }} />
-          <InputGroup.Text>Всего</InputGroup.Text>
+          <InputGroup.Text>Статистика</InputGroup.Text>
           <Form.Control
-            value={`${props.totalQuestions} вопросов, ${props.uniqueCategoriesCount} категорий`}
+            value={`категорий: ${props.uniqueCategoriesCount}, вопросов: ${props.totalQuestions}, проверено: ${props.checkedQuestionCount}`}
             readOnly />
         </InputGroup>
 
@@ -155,16 +162,61 @@ function QuestionTable(props) {
           <InputGroup.Text>Фильтр</InputGroup.Text>
           <Form.Control
             placeholder='Поиск'
-            value={props.searchFilter}
-            onChange={props.handleFilter} />
+            value={props.filterText}
+            onChange={(e) => props.setFilterText(e.target.value)} />
         </InputGroup>
+
+        <InputGroup className="mb-3">
+          <div className="d-flex align-items-center">
+            <Form.Check // prettier-ignore
+              type="switch"
+              label="Непроверенные"
+              className="me-4" // отступ справа
+              checked={props.filterNoReady}
+               onChange={(e) => {
+                    props.setFilterNoReady(e.target.checked)}
+                  }
+            />
+            <Form.Check // prettier-ignore
+               type="switch"
+               label="Проверенные"
+               className="me-4" // отступ справа
+               checked={props.filterReady}
+               onChange={(e) => {
+                    props.setFilterReady(e.target.checked)}
+                  }
+            />
+            <Form.Check // prettier-ignore
+              type="switch"
+              label="Без полного ответа"
+              className="me-4" // отступ справа
+              checked={props.filterWithNoInfo}
+              onChange={(e) => {
+                    props.setFilterWithNoInfo(e.target.checked)}
+                  }
+            />
+            <Form.Check // prettier-ignore
+              type="switch"
+              label="С полным ответом"
+              className="me-4" // отступ справа
+              checked={props.filterWithInfo}
+              onChange={(e) => {
+                    props.setFilterWithInfo(e.target.checked)}
+                  }
+            />
+
+          </div>
+        </InputGroup>
+
         <Table striped bordered hover className="QuestionTable">
           <thead>
             <tr>
               <th>Вопросы</th>
-              <th>Категория</th>
-              <th>Очки</th>
-              <th className='TdButtonColumn'>Действия</th>
+              <th className="text-center">Категория</th>
+              <th className="text-center">Очки</th>
+              <th className="text-center">Есть полный ответ</th>
+              <th className="text-center">Проверено</th>
+              <th className='text-center TdButtonColumn'>Действия</th>
             </tr>
           </thead>
           <tbody>
@@ -174,6 +226,26 @@ function QuestionTable(props) {
                   <td>{item.question}</td>
                   <td>{item.category}</td>
                   <td className='TdScore'>{item.score}</td>
+                  <td className="text-center">
+                    <Form.Check 
+                                type="checkbox"
+                                label=''
+                                checked={item.info != null && item.info.trim().length > 0}
+                                readOnly={true}
+                                onClick={(e) => e.preventDefault()}
+                                className="d-flex justify-content-center"
+                              />
+                  </td>
+                  <td className="text-center">
+                    <Form.Check 
+                                type="checkbox"
+                                label=''
+                                checked={item.ready}
+                                readOnly={true}
+                                onClick={(e) => e.preventDefault()}
+                                className="d-flex justify-content-center"
+                              />
+                  </td>
                   <td className='TdButtonAction'>
 
                     <Dropdown className="me-2">
