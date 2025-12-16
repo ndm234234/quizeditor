@@ -14,7 +14,7 @@ const convertToBase64 = async (url) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const blob = await response.blob();
-    
+
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result);
@@ -27,7 +27,7 @@ const convertToBase64 = async (url) => {
     if (url.toLowerCase().includes('.gif')) {
       throw new Error('GIF cannot be loaded via fetch due to CORS');
     }
-    
+
     // Для других форматов пробуем canvas
     return convertViaCanvas(url);
   }
@@ -37,23 +37,23 @@ const convertViaCanvas = (url) => {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.onload = function() {
+    img.onload = function () {
       const canvas = document.createElement('canvas');
       canvas.width = this.naturalWidth;
       canvas.height = this.naturalHeight;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(this, 0, 0);
-      
+
       // Определяем формат на основе MIME-типа
       const isPng = url.includes('.png');
       const isJpeg = url.includes('.jpg') || url.includes('.jpeg');
       const isWebp = url.includes('.webp');
-      
-      const format = isPng ? 'image/png' : 
-                    isJpeg ? 'image/jpeg' : 
-                    isWebp ? 'image/webp' : 
-                    'image/png';
-      
+
+      const format = isPng ? 'image/png' :
+        isJpeg ? 'image/jpeg' :
+          isWebp ? 'image/webp' :
+            'image/png';
+
       resolve(canvas.toDataURL(format));
     };
     img.onerror = reject;
@@ -62,14 +62,14 @@ const convertViaCanvas = (url) => {
 };
 
 const ImageControl = forwardRef(
-  ({ 
-    initialImage = null, 
-    onChange = null, 
+  ({
+    initialImage = null,
+    onChange = null,
     maxHeight = "280px",
     noPadding = false, // Новый пропс для управления внешними отступами
     className = "", // Дополнительные классы
     style = {}, // Дополнительные стили
-    ...props 
+    ...props
   }, ref) => {
     const [imageUrl, setImageUrl] = useState("");
     const [currentImage, setCurrentImage] = useState(initialImage);
@@ -78,14 +78,14 @@ const ImageControl = forwardRef(
 
     const handleUrlLoad = async () => {
       if (!imageUrl.trim()) return;
-      
+
       const url = imageUrl.trim();
       const isGif = url.toLowerCase().includes('.gif');
-      
+
       // Очищаем предыдущее изображение
       setCurrentImage(null);
       setIsLoading(true);
-      
+
       try {
         if (isGif) {
           // Для GIF используем специальную обработку
@@ -98,7 +98,7 @@ const ImageControl = forwardRef(
         }
       } catch (error) {
         console.error('Error loading image:', error);
-        
+
         // Если не получилось через fetch/canvas, пробуем напрямую
         if (isGif) {
           // Для GIF показываем предупреждение
@@ -119,18 +119,18 @@ const ImageControl = forwardRef(
         setIsLoading(false);
       }
     };
-    
+
     const loadGifFromUrl = async (url) => {
       return new Promise((resolve, reject) => {
         // Создаем изображение для проверки доступности
         const testImg = new Image();
         testImg.crossOrigin = "anonymous";
-        
+
         testImg.onload = () => {
           // GIF доступен, теперь пытаемся получить как base64
           const imgForBase64 = new Image();
           imgForBase64.crossOrigin = "anonymous";
-          
+
           imgForBase64.onload = async () => {
             try {
               // Пробуем fetch с обработкой CORS
@@ -138,7 +138,7 @@ const ImageControl = forwardRef(
                 mode: 'cors',
                 credentials: 'omit'
               });
-              
+
               if (response.ok) {
                 const blob = await response.blob();
                 const base64 = await new Promise((resolve, reject) => {
@@ -147,7 +147,7 @@ const ImageControl = forwardRef(
                   reader.onerror = reject;
                   reader.readAsDataURL(blob);
                 });
-                
+
                 setCurrentImage(base64);
                 onChange?.(base64, { type: 'url' });
                 resolve();
@@ -162,11 +162,11 @@ const ImageControl = forwardRef(
               resolve();
             }
           };
-          
+
           imgForBase64.onerror = reject;
           imgForBase64.src = url;
         };
-        
+
         testImg.onerror = () => reject(new Error('Image failed to load'));
         testImg.src = url;
       });
@@ -178,8 +178,8 @@ const ImageControl = forwardRef(
         const reader = new FileReader();
         reader.onload = (e) => {
           setCurrentImage(e.target.result);
-          onChange?.(e.target.result, { 
-            file, 
+          onChange?.(e.target.result, {
+            file,
             type: "file",
             format: file.type
           });
@@ -221,7 +221,7 @@ const ImageControl = forwardRef(
     const containerClass = `container-fluid ${className}`;
 
     return (
-      <div 
+      <div
         className={containerClass}
         style={containerStyle}
         {...props}
@@ -229,8 +229,8 @@ const ImageControl = forwardRef(
         <div className="row g-1">
           {/* Левая панель - предпросмотр */}
           <div className="col-md-6 d-flex">
-            <div className="card w-100 rounded-1" style={{ 
-              maxHeight, 
+            <div className="card w-100 rounded-1" style={{
+              maxHeight,
               overflow: "hidden",
             }}>
               <div className="card-body p-2 d-flex flex-column">
@@ -256,7 +256,7 @@ const ImageControl = forwardRef(
                 ) : (
                   <div className="flex-grow-1 d-flex align-items-center justify-content-center text-muted">
                     <div className="text-center">
-                      <div style={{ fontSize: "1.5rem" }}>🖼️</div>
+                      <div style={{ fontSize: "1.5rem" }}>📷</div>
                       <small>Нет изображения</small>
                     </div>
                   </div>
@@ -267,8 +267,8 @@ const ImageControl = forwardRef(
 
           {/* Правая панель - управление */}
           <div className="col-md-6 d-flex">
-            <div className="card w-100 rounded-1" style={{ 
-              maxHeight, 
+            <div className="card w-100 rounded-1" style={{
+              maxHeight,
               overflow: "hidden",
             }}>
               <div className="card-body p-2 d-flex flex-column">

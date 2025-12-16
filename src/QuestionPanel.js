@@ -5,6 +5,7 @@ import CloseButton from 'react-bootstrap/CloseButton';
 import Button from "react-bootstrap/Button";
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ImageControl from "./ImageControl";
+import Accordion from 'react-bootstrap/Accordion';
 
 import { uuid } from './tools.js';
 
@@ -55,14 +56,18 @@ function QuestionPanel(props) {
           <Form.Control.Feedback type="invalid">Необходимо ввести вопрос</Form.Control.Feedback>
         </InputGroup>
         <Form.Group className="mb-3">
-          <Form.Label>Изображение к вопросу</Form.Label>
-          <div>
-            <ImageControl initialImage={props.questionImage != null ? props.questionImage : ""}
-              onChange={
-                e => props.setQuestionImage(e)}
-              noPadding={true}
-            />
-          </div>
+          <Accordion defaultActiveKey={props.questionImage?.length > 0 ? "0" : null} flush>
+            <Accordion.Item eventKey="0">
+              <Accordion.Header>Изображение к вопросу</Accordion.Header>
+              <Accordion.Body>
+                <ImageControl initialImage={props.questionImage != null ? props.questionImage : ""}
+                  onChange={
+                    e => props.setQuestionImage(e)}
+                  noPadding={true}
+                />
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
         </Form.Group>
         <div>
           <AnswersDisplay answers={props.answers}
@@ -84,14 +89,20 @@ function QuestionPanel(props) {
             onChange={e => props.setInfo(e.target.value)} />
         </Form.Group>
         <Form.Group className="mb-3">
-          <Form.Label>Изображение к правильному ответу</Form.Label>
-          <div>
-            <ImageControl initialImage={props.infoImg != null ? props.infoImg : ""}
-              onChange={e => props.setInfoImg(e)}
-              noPadding={true}
-            />
-          </div>
-
+          <Accordion defaultActiveKey={props.infoImg?.length > 0 ? "0" : null} flush>
+            <Accordion.Item eventKey="0">
+              <Accordion.Header>Изображение к правильному ответу</Accordion.Header>
+              <Accordion.Body>
+                <div className="mt-2" style={{ maxWidth: '500px' }}>
+                  <ImageControl
+                    initialImage={props.infoImg != null ? props.infoImg : ""}
+                    onChange={e => props.setInfoImg(e)}
+                    noPadding={true}
+                  />
+                </div>
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
         </Form.Group>
         <Form.Group className="mb-3">
           <Form.Check
@@ -162,14 +173,26 @@ function AnswersDisplay(props) {
                       }
                     }}
                     isInvalid={props.validated && item.name.length == 0} />
-                  <div>
-                    <ImageControl initialImage={item.img != null ? item.img : ""}
-                      onChange={e => props.updateAnswerImg(e, index)}
-                    />
-                  </div>
                   <CloseButton className="closeButton" onClick={() => props.deleteAnswer(index)} />
                   <Form.Control.Feedback type="invalid">Необходимо ввести текст ответа</Form.Control.Feedback>
                 </InputGroup>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Accordion defaultActiveKey={item.img?.length > 0 ? "0" : null} flush>
+                  <Accordion.Item eventKey="0">
+                    <Accordion.Header>Изображение для варианта ответа</Accordion.Header>
+                    <Accordion.Body>
+                      <div className="mt-2" style={{ maxWidth: '500px' }}>
+                        <ImageControl
+                          initialImage={item.img ?? ""}
+                          onChange={(img) => props.updateAnswerImg(img, index)}
+                          style={{ paddingLeft: 0 }}
+                        /*noPadding*/
+                        />
+                      </div>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                </Accordion>
               </Form.Group>
             </div>
           );
