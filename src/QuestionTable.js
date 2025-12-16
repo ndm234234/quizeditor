@@ -1,4 +1,4 @@
-import  { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import Table from 'react-bootstrap/Table';
 import Form from 'react-bootstrap/Form';
@@ -18,33 +18,33 @@ function QuestionTable(props) {
   function updateData(data) {
 
     let oldFormat = false;
-    var result =  data.items.map((item) => {
+    var result = data.items.map((item) => {
       let options = item.options.map((option) => {
         if (typeof option == "string") {
-            oldFormat = true;
-            return { name : option }
+          oldFormat = true;
+          return { name: option }
         }
         else {
           return option;
         }
       });
 
-      return  {
-              answers : item.answers,
-              category : item.category,
-              info : item.info,
-              info_img : item.info_img,
-              question : item.question,
-              questionImage : item.questionImage,
-              score : item.score,
-              options : options
-        }
+      return {
+        answers: item.answers,
+        category: item.category,
+        info: item.info,
+        info_img: item.info_img,
+        question: item.question,
+        questionImage: item.questionImage,
+        score: item.score,
+        options: options
+      }
     });
 
-    var newData = 
+    var newData =
     {
-      title : data.title,
-      items : result
+      title: data.title,
+      items: result
     };
 
     props.setData(newData);
@@ -56,108 +56,109 @@ function QuestionTable(props) {
   function handleChange(event) {
     if (event.target.files.length > 0) {
 
-    let file = event.target.files[0];
-    props.setFileName(file.name);
-    var r = new FileReader();
-    r.onload = function(e) { 
+      let file = event.target.files[0];
+      props.setFileName(file.name);
+      var r = new FileReader();
+      r.onload = function (e) {
         let data = JSON.parse(e.target.result);
         createNewQuiz(data);
         event.target.value = null;
       }
-    r.readAsText(file);
+      r.readAsText(file);
     }
   }
 
-  function createNewQuiz(data = { title : "", items : new Array()}) {
+  function createNewQuiz(data = { title: "", items: new Array() }) {
     const needUpdate = updateData(data);
     props.setHasUnsavedChanges(needUpdate);
   }
 
-  if (!props.visible) 
-  {
+  if (!props.visible) {
     return null;
   }
   else
-  return (
-    <>
-      <MessageBoxModal show={showConfirmModalQueryNew}  
-                       title="Создание"
-                       query="Создать новую викторину? Все несохраненные данные будут потеряны."
-                       okButton="Создать"
-                       cancelButton="Отмена"
-                       onCancel={()=> { setShowConfirmModalQueryNew(false); }} 
-                       onOk={()=> {
-                           setShowConfirmModalQueryNew(false);
-                           createNewQuiz(); }} />
+    return (
+      <>
+        <MessageBoxModal show={showConfirmModalQueryNew}
+          title="Создание"
+          query="Создать новую викторину? Все несохраненные данные будут потеряны."
+          okButton="Создать"
+          cancelButton="Отмена"
+          onCancel={() => { setShowConfirmModalQueryNew(false); }}
+          onOk={() => {
+            setShowConfirmModalQueryNew(false);
+            createNewQuiz();
+          }} />
 
-      <MessageBoxModal show={showConfirmModalQueryLoad}  
-                       title="Есть несохраненные данные"
-                       query="Загрузить новую викторину? Все несохраненные данные будут потеряны."
-                       okButton="Загрузить"
-                       cancelButton="Отмена"
-                       onCancel={()=> { setShowConfirmModalQueryLoad(false); }} 
-                       onOk={()=> {
-                          setShowConfirmModalQueryLoad(false);
-                          document.getElementById('fileInput').click() }} />
+        <MessageBoxModal show={showConfirmModalQueryLoad}
+          title="Есть несохраненные данные"
+          query="Загрузить новую викторину? Все несохраненные данные будут потеряны."
+          okButton="Загрузить"
+          cancelButton="Отмена"
+          onCancel={() => { setShowConfirmModalQueryLoad(false); }}
+          onOk={() => {
+            setShowConfirmModalQueryLoad(false);
+            document.getElementById('fileInput').click()
+          }} />
 
-      <Form.Group className="mb-3">
-        <Form.Control type="file" id="fileInput" 
-          accept=".txt,.json"
-          onChange={handleChange}  style={{ display: 'none' }}  />
+        <Form.Group className="mb-3">
+          <Form.Control type="file" id="fileInput"
+            accept=".txt,.json"
+            onChange={handleChange} style={{ display: 'none' }} />
           <ButtonGroup className="me-2">
             <Button variant="primary" onClick={() => {
-                if (!props.hasUnsavedChanges) {
-                  createNewQuiz();
-                } else {
-                  setShowConfirmModalQueryNew(true);
-                }
-              }}>Новая/Сбросить</Button>
+              if (!props.hasUnsavedChanges) {
+                createNewQuiz();
+              } else {
+                setShowConfirmModalQueryNew(true);
+              }
+            }}>Новая/Сбросить</Button>
           </ButtonGroup>
           <ButtonGroup className="me-2">
             <Dropdown>
               <Dropdown.Toggle variant="primary" id="dropdown-basic">Файл</Dropdown.Toggle>
               <Dropdown.Menu>
-              <Dropdown.Item onClick={() => {
-                 if (props.hasUnsavedChanges) {
-                   setShowConfirmModalQueryLoad(true);
-                 } else {
-                   document.getElementById('fileInput').click()
-                 }
-               }}>Загрузить</Dropdown.Item>
-              <Dropdown.Item disabled = {props.title.length == 0 || props.customData.items.length == 0} onClick={() => {
-                let data = props.customData;
-                data.title = props.title;
-                JSONToFile(data, props.title.length > 0 ? props.title + ".txt" : props.fileName)
-                props.setHasUnsavedChanges(false);
-              }}>Сохранить</Dropdown.Item>
+                <Dropdown.Item onClick={() => {
+                  if (props.hasUnsavedChanges) {
+                    setShowConfirmModalQueryLoad(true);
+                  } else {
+                    document.getElementById('fileInput').click()
+                  }
+                }}>Загрузить</Dropdown.Item>
+                <Dropdown.Item disabled={props.title.length == 0 || props.customData.items.length == 0} onClick={() => {
+                  let data = props.customData;
+                  data.title = props.title;
+                  JSONToFile(data, props.title.length > 0 ? props.title + ".txt" : props.fileName)
+                  props.setHasUnsavedChanges(false);
+                }}>Сохранить</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </ButtonGroup>
-      </Form.Group>
+        </Form.Group>
 
-      <InputGroup className="mb-3">
-        <InputGroup.Text>Название викторины</InputGroup.Text>
-        <Form.Control
-          placeholder='Название'
-          value={props.title}
-          onChange={(e) => {
-            props.updateTitle(e.target.value);
-            props.setHasUnsavedChanges(true);
-          }} />
-        <InputGroup.Text>Всего</InputGroup.Text>
-        <Form.Control
-          value={`${props.totalQuestions} вопросов, ${props.uniqueCategoriesCount} категорий`}
-          readOnly />
-      </InputGroup>
+        <InputGroup className="mb-3">
+          <InputGroup.Text>Название викторины</InputGroup.Text>
+          <Form.Control
+            placeholder='Название'
+            value={props.title}
+            onChange={(e) => {
+              props.updateTitle(e.target.value);
+              props.setHasUnsavedChanges(true);
+            }} />
+          <InputGroup.Text>Всего</InputGroup.Text>
+          <Form.Control
+            value={`${props.totalQuestions} вопросов, ${props.uniqueCategoriesCount} категорий`}
+            readOnly />
+        </InputGroup>
 
-      <InputGroup className="mb-3">
-        <InputGroup.Text>Фильтр</InputGroup.Text>
-        <Form.Control
-          placeholder='Поиск'
-          value={props.searchFilter}
-          onChange={props.handleFilter} />
-      </InputGroup>
-      <Table striped bordered hover className="QuestionTable">
+        <InputGroup className="mb-3">
+          <InputGroup.Text>Фильтр</InputGroup.Text>
+          <Form.Control
+            placeholder='Поиск'
+            value={props.searchFilter}
+            onChange={props.handleFilter} />
+        </InputGroup>
+        <Table striped bordered hover className="QuestionTable">
           <thead>
             <tr>
               <th>Вопросы</th>
@@ -174,12 +175,24 @@ function QuestionTable(props) {
                   <td>{item.category}</td>
                   <td className='TdScore'>{item.score}</td>
                   <td className='TdButtonAction'>
-                  <ButtonGroup className="me-2"  >
-                    <Button  onClick={() => props.showQuestion(item)}>Изменить</Button>
-                  </ButtonGroup>
-                  <ButtonGroup className="me-2" >
-                    <Button  onClick={() => props.deleteQuestion(item)}>Удалить</Button>
-                  </ButtonGroup>
+
+                    <Dropdown className="me-2">
+                      <Dropdown.Toggle variant="primary" size="sm">
+                        Действия
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        <Dropdown.Item onClick={() => props.showQuestion(item)}>
+                          Изменить
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                          onClick={() => props.deleteQuestion(item)}
+                          className="text-danger"
+                        >
+                          Удалить
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+
                   </td>
                 </tr>
               );
@@ -196,10 +209,10 @@ function QuestionTable(props) {
             setCurrentPage={props.setCurrentPage}
             alwaysShown={true} />}
         <div className="addButtons">
-            <Button onClick={props.createNewQuestion}>Новый вопрос</Button>
+          <Button onClick={props.createNewQuestion}>Новый вопрос</Button>
         </div>
-        </>
+      </>
     );
-  }
+}
 
-  export default QuestionTable;
+export default QuestionTable;
