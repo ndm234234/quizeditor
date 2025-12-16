@@ -1,0 +1,9 @@
+.messagebox_modal-content-custom {
+    background-color: #74b6db !important;
+    color: #fff;
+    /* justify-content: center;*/
+}
+
+.messagebox_modal-footer-custom {
+    background-color: #74b6db !important;
+}

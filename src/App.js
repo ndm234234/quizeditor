@@ -184,10 +184,11 @@ function App() {
                    title={showConfirmModalQueryConflict}
                    query={itemToDelete}
                    okButton="Перезаписать"
+                   cancelButton="Отмена"
                    onCancel={() => {
                     setShowConfirmModalQueryConflict('')}
                    } 
-                  OnOk={() => {
+                  onOk={() => {
                     createOrUpdateQuestion(itemToSave);
                     setShowQuestionDetail(false);
                     handleCloseModal();
@@ -198,8 +199,9 @@ function App() {
                    title="Удаление"
                    query={itemToDelete}
                    okButton="Удалить"
+                   cancelButton="Отмена"
                    onCancel={() => setShowModalQueryDelete(false)} 
-                   OnOk={handleCloseModal}   />
+                   onOk={handleCloseModal}   />
 
   <QuestionTable visible={!showQuestionDetail} 
                  searchFilter={searchFilter} 

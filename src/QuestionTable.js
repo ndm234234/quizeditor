@@ -84,8 +84,9 @@ function QuestionTable(props) {
                        title="Создание"
                        query="Создать новую викторину? Все несохраненные данные будут потеряны."
                        okButton="Создать"
+                       cancelButton="Отмена"
                        onCancel={()=> { setShowConfirmModalQueryNew(false); }} 
-                       OnOk={()=> {
+                       onOk={()=> {
                            setShowConfirmModalQueryNew(false);
                            createNewQuiz(); }} />
 
@@ -93,8 +94,9 @@ function QuestionTable(props) {
                        title="Есть несохраненные данные"
                        query="Загрузить новую викторину? Все несохраненные данные будут потеряны."
                        okButton="Загрузить"
+                       cancelButton="Отмена"
                        onCancel={()=> { setShowConfirmModalQueryLoad(false); }} 
-                       OnOk={()=> {
+                       onOk={()=> {
                           setShowConfirmModalQueryLoad(false);
                           document.getElementById('fileInput').click() }} />
 
