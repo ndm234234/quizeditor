@@ -113,18 +113,16 @@ function QuestionTable(props) {
             accept=".txt,.json"
             onChange={handleChange} style={{ display: 'none' }} />
           <ButtonGroup className="me-2">
-            <Button variant="primary" onClick={() => {
-              if (!props.hasUnsavedChanges) {
-                createNewQuiz();
-              } else {
-                setShowConfirmModalQueryNew(true);
-              }
-            }}>Новая/Сбросить</Button>
-          </ButtonGroup>
-          <ButtonGroup className="me-2">
             <Dropdown>
               <Dropdown.Toggle variant="primary" id="dropdown-basic">Файл</Dropdown.Toggle>
               <Dropdown.Menu>
+                <Dropdown.Item onClick={() => { 
+                if (!props.hasUnsavedChanges) {
+                     createNewQuiz();
+                  } else {
+                    setShowConfirmModalQueryNew(true);
+                  }}}>Новая/Сбросить</Dropdown.Item>
+                <Dropdown.Divider />
                 <Dropdown.Item onClick={() => {
                   if (props.hasUnsavedChanges) {
                     setShowConfirmModalQueryLoad(true);
@@ -189,7 +187,7 @@ function QuestionTable(props) {
             <Form.Check // prettier-ignore
               type="switch"
               label="Без полного ответа"
-              className="me-4" // отступ справа
+              className="me-4 text-nowrap" // отступ справа
               checked={props.filterWithNoInfo}
               onChange={(e) => {
                     props.setFilterWithNoInfo(e.target.checked)}
@@ -198,13 +196,12 @@ function QuestionTable(props) {
             <Form.Check // prettier-ignore
               type="switch"
               label="С полным ответом"
-              className="me-4" // отступ справа
+              className="me-4 text-nowrap" // отступ справа
               checked={props.filterWithInfo}
               onChange={(e) => {
                     props.setFilterWithInfo(e.target.checked)}
                   }
             />
-
           </div>
         </InputGroup>
 
