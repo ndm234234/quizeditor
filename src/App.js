@@ -97,35 +97,37 @@ function App() {
   }
 
   const createOrUpdateQuestion = (item) => {
-    if (item.question != item.savedQuestion) {
-      const indexToDelete = customData.items.findIndex(i => i.question == item.savedQuestion);
-      if (indexToDelete != -1) {
-        setCustomData(prev => {
-          const newItems = [...prev.items];
-          newItems.splice(indexToDelete, 1);
-          return { ...prev, items: newItems };
-        });
-      }
-    }
+    setCustomData(prev => {
+    const items = [...prev.items];
+    let newItems = [...items];
 
-    const index = customData.items.findIndex(i => i.question == item.question);
-    if (index == -1) {
-      const newItems = [...customData.items, item];
-      const pagesCount = Math.ceil(newItems.length / pageSize);
-      // Обновляем состояние
-      setCustomData(prev => ({
+    if (item.question !== item.savedQuestion) {
+        const indexToDelete = items.findIndex(i => i.question === item.savedQuestion);
+        if (indexToDelete !== -1) {
+          newItems = newItems.filter((_, index) => index !== indexToDelete);
+        }
+      }
+      
+      const existingIndex = newItems.findIndex(i => i.question === item.question);
+      if (existingIndex === -1) {
+        newItems = [...newItems, item];
+        const pagesCount = Math.ceil(newItems.length / pageSize);
+        
+        setTimeout(() => {
+          setCurrentPage(pagesCount);
+        }, 0);
+      } else {
+        newItems[existingIndex] = item;
+      }
+      
+      const updatedState = {
         ...prev,
         items: newItems
-      }));
-      setCurrentPage(pagesCount);
-    }
-    else {
-      setCustomData(prev => {
-        const newItems = [...prev.items];
-        newItems[index] = item;
-        return { ...prev, items: newItems };
-      });
-    }
+      };
+      
+      return updatedState;
+    });
+
     setHasUnsavedChanges(true);
   }
 

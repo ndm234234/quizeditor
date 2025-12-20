@@ -108,11 +108,8 @@ function QuestionPanel(props) {
           <Form.Check
             type="checkbox"
             label='Проверен'
-            checked={props.ready}
-            onChange={(e) => {
-              props.setReady(e.target.checked)
-            }
-            }
+            checked={props.ready ?? false}
+            onChange={(e) => { props.setReady(e.target.checked)}}
           />
         </Form.Group>
         <Form.Group className="mb-3">
